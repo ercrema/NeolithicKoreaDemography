@@ -1,27 +1,29 @@
-### Generate Sample Data with Known Growth Rate ###
+### Generate Sample Data with Known Growth Rate ####
+
+# Load Required R packages
 library(rcarbon)
 library(Bchron)
+library(foreach)
+library(doParallel)
+
+# Set up population parameters
 start = 7000
 end = 3000
-r = -0.0002
-n = 200 #sample size
+r = -0.002
 CalBP = 7000:3000
 PrDens = (1+r)^CalBP / sum((1+r)^CalBP)
-#plot(CalBP,PrDens,xlim=c(7000,3000))
 
-## uncalibrate option 1 (individual dates):
+# Generate hypothetical sample
+n = 200 #sample size
 set.seed(1)
 sampled.calendar.dates = sample(CalBP,size=n,replace=TRUE,prob=PrDens)
-sampled.c14.dates.uncalsample = uncalibrate(sampled.calendar.dates)$rCRA
+sampled.c14.dates.backcalibrate = uncalibrate(sampled.calendar.dates)$rCRA
 d = data.frame(CalBP=CalBP,PrDens=PrDens)
 class(d)='CalGrid'
 d = uncalibrate(d,verbose=F)
-sampled.c14.dates.calsample=sample(d$CRA,size=n,replace=T,prob=d$PrDens)
+sampled.c14.dates.uncalsample=sample(d$CRA,size=n,replace=T,prob=d$PrDens) #Andy's assumption
+sampled.c14.dates.calsample=sample(d$CRA,size=n,replace=T,prob=d$Raw) #traditional assumption
 
-# par(mfrow=c(3,1))
-# plot(as.numeric(names(table(sampled.c14.dates1))),table(sampled.c14.dates1),type='l')
-# plot(as.numeric(names(table(sampled.c14.dates2))),table(sampled.c14.dates2),type='l')
-# plot(as.numeric(names(table(sampled.c14.dates3))),table(sampled.c14.dates3),type='l')
 
 sampled.calibrated.dates.uncalsample = calibrate(sampled.c14.dates.uncalsample,errors=rep(20,n)) 
 sampled.calibrated.dates.calsample = calibrate(sampled.c14.dates.calsample,errors=rep(20,n)) 
@@ -29,10 +31,11 @@ sampled.calibrated.dates.calsample = calibrate(sampled.c14.dates.calsample,error
 sampled.spd.uncalsample = spd(sampled.calibrated.dates.uncalsample,timeRange=c(7000,3000),spdnormalised = TRUE)
 sampled.spd.calsample = spd(sampled.calibrated.dates.calsample,timeRange=c(7000,3000),spdnormalised = TRUE)
 
-observed = sampled.spd.uncalsample$grid$PrDens
+observed.uncalsample = sampled.spd.uncalsample$grid$PrDens
+observed.calsample = sampled.spd.calsample$grid$PrDens
 
 
-simExponential = function(x)
+simExponential = function(x,method)
 {
   require(Bchron)
   start = 7000
@@ -40,7 +43,6 @@ simExponential = function(x)
   diff = abs(start-end)
   CalBP = 1:(diff+1)
   errors= c(20,20)
-  method='calsample'
   n=200
   r = -x
   PrDens = (1+r)^CalBP / sum((1+r)^CalBP)
@@ -60,22 +62,39 @@ simExponential = function(x)
 }
 
 
-set.seed(1)
-nsim=10000
+tol=0.01
+ncores = 5
+nsim = 50000
+cl <- makeCluster(ncores)
+registerDoParallel(cl)
 params=rexp(nsim,30)
-euc_epsilon=ks_epsilon=numeric(length=nsim)
-for (i in 1:nsim)
-{
-  print(i)
-  set.seed(i)
-  res=simExponential(params[i])
-  euc_epsilon[i]=sqrt(sum((res-observed)^2))
-  ks_epsilon[i]=max(cumsum(res)-cumsum(observed))
+opts <- list(progress = progress)
+observed=observed.uncalsample
+
+reslist <- foreach (i=1:nsim,.verbose = T) %do% {
+  res.uncalsample=simExponential(params[i],method='uncalsample')
+  res.calsample=simExponential(params[i],method='calsample')
+  euc_epsilon_uncalsample=sqrt(sum((res.uncalsample-observed)^2))
+  euc_epsilon_calsample=sqrt(sum((res.calsample-observed)^2))
+  ks_epsilon_uncalsample=max(cumsum(res.uncalsample)-cumsum(observed))
+  ks_epsilon_calsample=max(cumsum(res.calsample)-cumsum(observed))
+  r_used = params[i]
+  return(list(euc_epsilon_uncalsample,euc_epsilon_calsample,ks_epsilon_uncalsample,ks_epsilon_calsample,r_used))
 }
 
-best01euc = order(euc_epsilon)[1:100]
-best01kc = order(ks_epsilon)[1:100]
+stopCluster(cl) 
 
+
+
+
+
+euc_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[1]]}))
+euc_epsilon_calsample = unlist(lapply(reslist,function(x){x[[2]]}))
+ks_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[3]]}))
+ks_epsilon_calsample = unlist(lapply(reslist,function(x){x[[4]]}))
+r_used = unlist(lapply(reslist,function(x){x[[5]]}))
+
+  
 save.image('testABC.RData')
 
 
