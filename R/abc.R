@@ -68,7 +68,6 @@ nsim = 50000
 cl <- makeCluster(ncores)
 registerDoParallel(cl)
 params=rexp(nsim,30)
-opts <- list(progress = progress)
 observed=observed.uncalsample
 
 reslist <- foreach (i=1:nsim,.verbose = T) %do% {
