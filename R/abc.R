@@ -5,6 +5,7 @@ library(rcarbon)
 library(Bchron)
 library(foreach)
 library(doParallel)
+library(doSNOW)
 
 # Set up population parameters
 start = 7000
@@ -66,11 +67,14 @@ tol=0.01
 ncores = 5
 nsim = 50000
 cl <- makeCluster(ncores)
-registerDoParallel(cl)
+registerDoSNOW(cl)
 params=rexp(nsim,30)
 observed=observed.uncalsample
+pb <- txtProgressBar(max = nsim, style = 3)
+progress <- function(n) setTxtProgressBar(pb, n)
+opts <- list(progress = progress)
 
-reslist <- foreach (i=1:nsim,.verbose = T) %do% {
+reslist <- foreach (i=1:nsim,.packages='rcarbon',.options.snow = opts) %dopar% {
   res.uncalsample=simExponential(params[i],method='uncalsample')
   res.calsample=simExponential(params[i],method='calsample')
   euc_epsilon_uncalsample=sqrt(sum((res.uncalsample-observed)^2))
@@ -80,7 +84,7 @@ reslist <- foreach (i=1:nsim,.verbose = T) %do% {
   r_used = params[i]
   return(list(euc_epsilon_uncalsample,euc_epsilon_calsample,ks_epsilon_uncalsample,ks_epsilon_calsample,r_used))
 }
-
+close(pb)
 stopCluster(cl) 
 
 
