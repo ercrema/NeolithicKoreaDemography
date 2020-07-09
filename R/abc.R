@@ -75,30 +75,38 @@ progress <- function(n) setTxtProgressBar(pb, n)
 opts <- list(progress = progress)
 
 reslist <- foreach (i=1:nsim,.packages='rcarbon',.options.snow = opts) %dopar% {
-  res.uncalsample=simExponential(params[i],method='uncalsample')
-  res.calsample=simExponential(params[i],method='calsample')
+  set.seed(i)
+  res.uncalsample=rev(simExponential(params[i],method='uncalsample'))
+  set.seed(i)
+  res.calsample=rev(simExponential(params[i],method='calsample'))
   euc_epsilon_uncalsample=sqrt(sum((res.uncalsample-observed)^2))
   euc_epsilon_calsample=sqrt(sum((res.calsample-observed)^2))
   ks_epsilon_uncalsample=max(cumsum(res.uncalsample)-cumsum(observed))
   ks_epsilon_calsample=max(cumsum(res.calsample)-cumsum(observed))
+  
+  tmp.uncal = res.uncalsample/sum(res.uncalsample) - observed/sum(observed)
+  r2_uncal = 1-sum(tmp.uncal^2)/sum((observed-mean(observed))^2)
+  tmp.cal = res.calsample/sum(res.calsample) - observed/sum(observed)
+  r2_cal = 1-sum(tmp.cal^2)/sum((observed-mean(observed))^2)
+  
   r_used = params[i]
-  return(list(euc_epsilon_uncalsample,euc_epsilon_calsample,ks_epsilon_uncalsample,ks_epsilon_calsample,r_used))
+  return(list(euc_epsilon_uncalsample,euc_epsilon_calsample,ks_epsilon_uncalsample,ks_epsilon_calsample,r2_uncal=r2_uncal,r2_cal=r2_cal,r_used))
 }
 close(pb)
 stopCluster(cl) 
-
-
-
 
 
 euc_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[1]]}))
 euc_epsilon_calsample = unlist(lapply(reslist,function(x){x[[2]]}))
 ks_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[3]]}))
 ks_epsilon_calsample = unlist(lapply(reslist,function(x){x[[4]]}))
-r_used = unlist(lapply(reslist,function(x){x[[5]]}))
+r2_calsample = unlist(lapply(reslist,function(x){x[[5]]}))
+r2_uncalsample = unlist(lapply(reslist,function(x){x[[6]]}))
+r_used = unlist(lapply(reslist,function(x){x[[7]]}))
 
-  
 save.image('testABC.RData')
+
+
 
 
 
