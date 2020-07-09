@@ -64,7 +64,7 @@ simExponential = function(x,method)
 
 
 tol=0.01
-ncores = 5
+ncores = 6
 nsim = 50000
 cl <- makeCluster(ncores)
 registerDoSNOW(cl)
@@ -95,13 +95,14 @@ reslist <- foreach (i=1:nsim,.packages='rcarbon',.options.snow = opts) %dopar% {
 close(pb)
 stopCluster(cl) 
 
+save.image('testABC.RData')
 
 euc_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[1]]}))
 euc_epsilon_calsample = unlist(lapply(reslist,function(x){x[[2]]}))
 ks_epsilon_uncalsample = unlist(lapply(reslist,function(x){x[[3]]}))
 ks_epsilon_calsample = unlist(lapply(reslist,function(x){x[[4]]}))
-r2_calsample = unlist(lapply(reslist,function(x){x[[5]]}))
-r2_uncalsample = unlist(lapply(reslist,function(x){x[[6]]}))
+r2_uncalsample = unlist(lapply(reslist,function(x){x[[5]]}))
+r2_calsample = unlist(lapply(reslist,function(x){x[[6]]}))
 r_used = unlist(lapply(reslist,function(x){x[[7]]}))
 
 save.image('testABC.RData')
