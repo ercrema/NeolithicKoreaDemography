@@ -1,14 +1,5 @@
 ### Read 14C Data ###
-koreaC14<-read.csv("~/Dropbox/PrehistoricPopulationKorea/R/data/raw/2016_Neolithic_C14_dates_collection_v4.3.csv")
-
-#updated
-
-### Sample Plot Functions for PlosONE ###
-# postscript("./figures/figure1.eps", height = 6, width = 6,family = "Times", paper = "special", onefile = FALSE, horizontal = FALSE)
-# options(scipen=999) #Ensure p-values are displayed in non-scientific annotation 
-# par(mfrow=c(2,3),family="Times")
-# dev.print(device=pdf,useDingbats=FALSE,"~/github/jomonSPD/figures/figure2.pdf")		
-
+koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v4.3.csv",stringsAsFactors = TRUE)
 
 ### Clean Data ###
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
@@ -77,4 +68,4 @@ problems.id=c(problems.id,ref)
 # Remove Dates without Lat/Long
 koreaC14 <- subset(koreaC14,!is.na(latitude)&!is.na(longitude))
 
-write.csv(koreaC14,file="~/Dropbox/PrehistoricPopulationKorea/R/data/koreaC14dates.csv",row.names=F, fileEncoding="UTF-8")
+write.csv(koreaC14,file="./koreaC14dates.csv",row.names=F, fileEncoding="UTF-8")

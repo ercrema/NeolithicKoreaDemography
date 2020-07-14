@@ -32,6 +32,10 @@ koreaC14 = unique(merge(x=koreaC14,y=sites,by.x="SiteID",by.y="SiteID",x.all=TRU
 caldates <- calibrate(koreaC14$c14age,koreaC14$c14error)
 bins=binPrep(ages=caldates,h=100,sites=koreaC14$cluster)
 
+### CKDE Random Bootstrapped Samples ####
+set.seed(123)
+sdates = sampleDates(caldates, bins = bins, nsim=1000, boot = TRUE, verbose = TRUE)
+
 #### Store in R image ####
-save(caldates,bins,koreaC14,file='./koreanC14.RData')
+save(sdates,caldates,bins,koreaC14,file='./koreanC14.RData')
 
