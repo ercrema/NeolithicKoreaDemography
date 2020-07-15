@@ -1,12 +1,12 @@
 # Load Files
 load('./data/koreanC14.RData')
-
+library(rcarbon)
 # Core Parameters
 bw = 100 #kernel bandwidth
 runm = 100 #smoothing window
-nsim = 1000 #number of MC iterations for modelTest()
+nsim = 500 #number of MC iterations for modelTest()
 timeRange = c(7000,3000) #time range of analysis
-ncores = 3 #number of cores
+ncores = 2 #number of cores
 
 # CKDE
 ckdeNorm = ckde(sdates,timeRange=timeRange,bw=bw,normalised=TRUE)
