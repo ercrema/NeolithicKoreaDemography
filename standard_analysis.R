@@ -6,7 +6,7 @@ bw = 100 #kernel bandwidth
 runm = 100 #smoothing window
 nsim = 5000 #number of MC iterations for modelTest()
 timeRange = c(7000,3000) #time range of analysis
-ncores = 2 #number of cores
+ncores = 5 #number of cores
 
 # CKDE
 ckdeNorm = ckde(sdates,timeRange=timeRange,bw=bw,normalised=TRUE)
