@@ -26,4 +26,4 @@ set.seed(123)
 logFitDens=data.frame(calBP=obs.calBP,PrDens=SSlogis(obs.calBP,coefficients(logFit)[1],coefficients(logFit)[2],coefficients(logFit)[3]))
 LogCheck <- modelTest(caldates,bins=bins,errors=koreaC14$c14error,model="custom",runm=runm,nsim=nsim,ncores=ncores,timeRange=timeRange,predgrid=logFitDens,spdnormalised = TRUE)
 
-save.image('./results_images/result_standard_analysis.RData')
+save(m1,LogCheck,file='./results_images/result_standard_analysis.RData')
