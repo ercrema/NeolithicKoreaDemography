@@ -1,4 +1,4 @@
-sim.model = function(x,caldates,bins,a,bl,br,c,timeRange=c(7000,3000),simonly=FALSE,method='both')
+sim.model = function(x,caldates,bins,bl,br,c,timeRange=c(7000,3000),simonly=FALSE,method='both',runm=runm)
 {
   if (!simonly)
   {
@@ -11,7 +11,11 @@ sim.model = function(x,caldates,bins,a,bl,br,c,timeRange=c(7000,3000),simonly=FA
   
   # Create Model
   CalBP = trange
-  PrDens=ifelse(CalBP < c, a * exp((CalBP-c) / br), a * exp(-(CalBP-c) / bl))
+  tpoint = max(trange)-round(c)
+  enpoint = round(c)-min(trange)
+  increase = 1*(1 + bl)^(1:tpoint)
+  decrease = increase[tpoint]*(1-br)^(1:(enpoint+1))
+  PrDens=c(increase,decrease)/sum(c(increase,decrease))
   d = data.frame(CalBP=CalBP,PrDens=PrDens/sum(PrDens))
   # Collect Samples
   class(d)='CalGrid'
@@ -59,7 +63,7 @@ sim.model = function(x,caldates,bins,a,bl,br,c,timeRange=c(7000,3000),simonly=FA
   {
     if (method=='both')
     {
-    return(list(a=a,bl=bl,br=br,c=c,euc_epsilon_uncalsample=euc_epsilon_uncalsample,euc_epsilon_calsample=euc_epsilon_calsample))
+    return(list(bl=bl,br=br,c=c,euc_epsilon_uncalsample=euc_epsilon_uncalsample,euc_epsilon_calsample=euc_epsilon_calsample))
     }
     if (method=='uncalsample')
     {
