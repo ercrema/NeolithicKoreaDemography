@@ -32,8 +32,8 @@ reslist <- foreach (i=1:nsim,.packages=c('rcarbon','Bchron'),.options.snow = opt
 
 save(reslist,file='../results_images/resABC_laplace.RData')
 
-bl = 1/unlist(lapply(reslist,function(x){x[[1]]}))
-br = 1/unlist(lapply(reslist,function(x){x[[2]]}))
+bl = unlist(lapply(reslist,function(x){x[[1]]}))
+br = unlist(lapply(reslist,function(x){x[[2]]}))
 c = unlist(lapply(reslist,function(x){x[[3]]}))
 euc.uncal = unlist(lapply(reslist,function(x){x[[4]]}))
 euc.cal = unlist(lapply(reslist,function(x){x[[5]]}))
