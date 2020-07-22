@@ -59,13 +59,13 @@ dev.off()
 # Posterior Distributions
 load('../results_images/resABC_laplace.RData')
 tol=0.05
-licary(coda)
+library(coda)
 post = res[order(res$euc.uncal)[1:(nrow(res)*tol)],]
-
+options(scipen = 9999)
 pdf(file = "./figure4.pdf",width = 10,height = 3.5)
 par(mfrow=c(1,3))
 #bl
-bl.hpdi=HPDinterval(mcmc(post$bl),prob = 0.95)
+bl.hpdi=HPDinterval(mcmc(post$bl),prob = 0.90)
 d.bl=density(post$bl)
 plot(d.bl$x,d.bl$y,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE)
 title('Growing Phase Growth Rate Posterior')
@@ -78,7 +78,7 @@ polygon(x=c(d.bl$x,rev(d.bl$x)),y=c(d.bl$y,rep(0,length(d.bl$y))))
 abline(v=median(post$bl),lty=2)
 
 #br
-br.hpdi=HPDinterval(mcmc(post$br),prob = 0.95)
+br.hpdi=HPDinterval(mcmc(post$br),prob = 0.90)
 d.br=density(post$br)
 plot(d.br$x,d.br$y,type='n',xlab='% Growth Rate',ylab='Probability Density',axes=FALSE)
 title('Declining Phase Growth Rate Posterior')
@@ -91,7 +91,7 @@ polygon(x=c(d.br$x,rev(d.br$x)),y=c(d.br$y,rep(0,length(d.br$y))))
 abline(v=median(post$br),lty=2)
 
 #c
-c.hpdi=HPDinterval(mcmc(post$c),prob = 0.95)
+c.hpdi=HPDinterval(mcmc(post$c),prob = 0.90)
 d.c=density(post$c)
 plot(d.c$x,d.c$y,type='n',xlab='Cal BP',ylab='Probability Density',axes=FALSE,xlim=rev(range(d.c$x)))
 title('Change Point Posterior')
@@ -108,6 +108,7 @@ dev.off()
 # Posterior Predictive Check
 load('../results_images/predcheck_results.RData')
 load('../data/koreanC14.RData')
+library(rcarbon)
 observed = spd(caldates,bins,timeRange=c(7000,3000),spdnormalised = TRUE)
 ppmedian=apply(ppcheck.uncal,1,median)
 pplo=apply(ppcheck.uncal,1,quantile,0.025)
