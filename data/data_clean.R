@@ -25,24 +25,14 @@ koreaC14$labcode[which(koreaC14$labcode=="")]=NA
 start.date=6200
 end.date=2800
 
+
 koreaC14 <- subset(koreaC14,
-		   !is.na(labcode)&
-	           !material%in%c("",
-				  "shell",
-				  "bone",
-				  "whale bone",
-				  "bone (partially charred)",
-				  "dog bone",
-				  "eared sea lion bone",
-				  "human bone (adult), shell",
-				  "oyster shell","cockle shell",
-				  "corbicula shell",
-				  "charred material on pottery",
-			          "Encrustation",
-			          "organic material attached on pottery",
-			          "pottery incrustation",
-			          "pottery piece")&
-		   c14age<start.date&c14age>=end.date)
+                   !is.na(labcode)&
+                     material%in%c("charcoal",
+                                   "charcoal (annual)",
+                                   "wood")&
+                     c14age<start.date&c14age>=end.date)
+
 
 
 koreaC14$SiteID <- as.numeric(koreaC14$site)
