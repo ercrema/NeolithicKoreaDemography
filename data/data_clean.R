@@ -1,5 +1,5 @@
 ### Read 14C Data ###
-koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v4.3.csv",stringsAsFactors = TRUE)
+koreaC14<-read.csv("./master_c14_v5.31.csv",stringsAsFactors = TRUE)
 
 ### Clean Data ###
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
