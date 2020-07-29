@@ -7,7 +7,7 @@ library(rgdal)
 library(rgeos)
 
 ### General Settings ###
-coastalThreshold = 20000 #in m
+coastalThreshold = 2000 #in m
 clusteringThreshold = 1 #in km
 temporalBinSize = 100 #in years
 
@@ -49,14 +49,22 @@ sp::coordinates(clusters) <- c("clon","clat")
 sp::proj4string(clusters) <- sp::CRS("+proj=longlat +datum=WGS84")
 clusters_utm <- spTransform(clusters,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
 koreanPeninsulaCoast_utm <- spTransform(koreanPeninsulaCoast,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
+koreanPeninsula_utm <- spTransform(koreanPeninsula,CRS("+proj=utm +zone=52 ellps=WGS84"))
 distfromcoast <- gDistance(koreanPeninsulaCoast_utm,clusters_utm,byid=TRUE)
+koreaC14$withinPoly=gContains(koreanPeninsula_utm,clusters_utm,byid=TRUE)
 koreaC14$coastDist = as.numeric(distfromcoast)
 koreaC14$region = 'inland'
 koreaC14$region[which(koreaC14$coastDist<coastalThreshold)]='coastal'
+
+
 ## test plot:
 # clusters_utm$region=koreaC14$region
+# clusters_utm$coastDist=koreaC14$coastDist
+# clusters_utm$withinPoly=koreaC14$withinPoly
 # plot(koreanPeninsulaCoast_utm)
+# points(clusters_utm,pch=20,cex=clusters_utm$coastDist/50000,col=rgb(1,0,0,0.5))
 # points(clusters_utm,pch=20,cex=0.6,col=as.numeric(as.factor(clusters_utm$region)))
+# points(clusters_utm,pch=20,cex=0.6,col=as.numeric(clusters_utm$withinPoly)+2)
 
 #### Calibration ####
 caldates <- calibrate(koreaC14$c14age,koreaC14$c14error)
