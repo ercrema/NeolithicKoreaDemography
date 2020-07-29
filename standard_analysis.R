@@ -12,10 +12,10 @@ ncores = 5 #number of cores
 ckdeNorm = ckde(sdates,timeRange=timeRange,bw=bw,normalised=TRUE)
 
 # Inland/Coastal Comparison
-costal.index = which(koreaC14$region=='coastal')
+coastal.index = which(koreaC14$region=='coastal')
 inland.index = which(koreaC14$region=='inland')
 
-sdates.coastal = sampleDates(caldates[costal.index], bins = bins[costal.index], nsim=1000, boot = TRUE, verbose = TRUE)
+sdates.coastal = sampleDates(caldates[costal.index], bins = bins[coastal.index], nsim=1000, boot = TRUE, verbose = TRUE)
 sdates.inland = sampleDates(caldates[inland.index], bins = bins[inland.index], nsim=1000, boot = TRUE, verbose = TRUE)
 
 ckdeNorm.coastal = ckde(sdates.coastal,timeRange=timeRange,bw=bw,normalised=TRUE)
