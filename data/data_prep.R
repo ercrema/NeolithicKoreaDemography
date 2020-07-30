@@ -14,11 +14,15 @@ temporalBinSize = 100 #in years
 ### Read 14C Data ####
 koreaC14<-read.csv("./koreaC14dates.csv")
 
-### Read Coastal Data from rworldmap
-basemap <- getMap(resolution = "high")
-koreanPeninsula=subset(basemap,SOVEREIGNT%in%c('South Korea','North Korea','Korea No Mans Area'))
-koreanPeninsula <- unionSpatialPolygons(koreanPeninsula,IDs=c(1,1,1))
-koreanPeninsulaCoast = as(koreanPeninsula, "SpatialLines")
+### Read Coastal Data
+# basemap <- getMap(resolution = "high")
+# koreanPeninsula=subset(basemap,SOVEREIGNT%in%c('South Korea','North Korea','Korea No Mans Area'))
+# koreanPeninsula <- unionSpatialPolygons(koreanPeninsula,IDs=c(1,1,1))
+# koreanPeninsulaCoast = as(koreanPeninsula, "SpatialLines")
+koreanPeninsulaCoast = readOGR(dsn='./korea_line/',layer='korea_line')
+koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
+proj4string(koreanPeninsulaCoast) <- CRS("+proj=longlat +datum=WGS84")
+
 
 #### Use DBSCAN to Clusters site in proximity #### 
 sites <- unique(data.frame(SiteID=koreaC14$SiteID,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
@@ -49,9 +53,9 @@ sp::coordinates(clusters) <- c("clon","clat")
 sp::proj4string(clusters) <- sp::CRS("+proj=longlat +datum=WGS84")
 clusters_utm <- spTransform(clusters,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
 koreanPeninsulaCoast_utm <- spTransform(koreanPeninsulaCoast,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
-koreanPeninsula_utm <- spTransform(koreanPeninsula,CRS("+proj=utm +zone=52 ellps=WGS84"))
+# koreanPeninsula_utm <- spTransform(koreanPeninsula,CRS("+proj=utm +zone=52 ellps=WGS84"))
 distfromcoast <- gDistance(koreanPeninsulaCoast_utm,clusters_utm,byid=TRUE)
-koreaC14$withinPoly=gContains(koreanPeninsula_utm,clusters_utm,byid=TRUE)
+#koreaC14$withinPoly=gContains(koreanPeninsula_utm,clusters_utm,byid=TRUE)
 koreaC14$coastDist = as.numeric(distfromcoast)
 koreaC14$region = 'inland'
 koreaC14$region[which(koreaC14$coastDist<coastalThreshold)]='coastal'
