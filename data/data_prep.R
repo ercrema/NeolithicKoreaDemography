@@ -19,7 +19,7 @@ koreaC14<-read.csv("./koreaC14dates.csv")
 # koreanPeninsula=subset(basemap,SOVEREIGNT%in%c('South Korea','North Korea','Korea No Mans Area'))
 # koreanPeninsula <- unionSpatialPolygons(koreanPeninsula,IDs=c(1,1,1))
 # koreanPeninsulaCoast = as(koreanPeninsula, "SpatialLines")
-koreanPeninsulaCoast = readOGR(dsn='./korea_line/',layer='korea_line')
+koreanPeninsulaCoast = readOGR(dsn='./polyline_korea/',layer='polyline_korea')
 koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
 proj4string(koreanPeninsulaCoast) <- CRS("+proj=longlat +datum=WGS84")
 
