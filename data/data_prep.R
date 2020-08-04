@@ -20,8 +20,8 @@ koreaC14<-read.csv("./koreaC14dates.csv")
 # koreanPeninsula <- unionSpatialPolygons(koreanPeninsula,IDs=c(1,1,1))
 # koreanPeninsulaCoast = as(koreanPeninsula, "SpatialLines")
 koreanPeninsulaCoast = readOGR(dsn='./polyline_korea/',layer='polyline_korea')
-koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
 proj4string(koreanPeninsulaCoast) <- CRS("+proj=longlat +datum=WGS84")
+koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
 
 
 #### Use DBSCAN to Clusters site in proximity #### 
@@ -64,11 +64,9 @@ koreaC14$region[which(koreaC14$coastDist<coastalThreshold)]='coastal'
 ## test plot:
 # clusters_utm$region=koreaC14$region
 # clusters_utm$coastDist=koreaC14$coastDist
-# clusters_utm$withinPoly=koreaC14$withinPoly
 # plot(koreanPeninsulaCoast_utm)
 # points(clusters_utm,pch=20,cex=clusters_utm$coastDist/50000,col=rgb(1,0,0,0.5))
 # points(clusters_utm,pch=20,cex=0.6,col=as.numeric(as.factor(clusters_utm$region)))
-# points(clusters_utm,pch=20,cex=0.6,col=as.numeric(clusters_utm$withinPoly)+2)
 
 #### Calibration ####
 caldates <- calibrate(koreaC14$c14age,koreaC14$c14error)
