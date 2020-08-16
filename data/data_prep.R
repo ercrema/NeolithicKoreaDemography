@@ -5,6 +5,7 @@ library(rworldmap)
 library(maptools)
 library(rgdal)
 library(rgeos)
+library(raster)
 
 ### General Settings ###
 coastalThreshold = 2000 #in m
@@ -19,8 +20,9 @@ koreaC14<-read.csv("./koreaC14dates.csv")
 # koreanPeninsula=subset(basemap,SOVEREIGNT%in%c('South Korea','North Korea','Korea No Mans Area'))
 # koreanPeninsula <- unionSpatialPolygons(koreanPeninsula,IDs=c(1,1,1))
 # koreanPeninsulaCoast = as(koreanPeninsula, "SpatialLines")
-koreanPeninsulaCoast = readOGR(dsn='./polyline_korea/',layer='polyline_korea')
-proj4string(koreanPeninsulaCoast) <- CRS("+proj=longlat +datum=WGS84")
+#koreanPeninsulaCoast = readOGR(dsn='./polyline_korea/',layer='polyline_korea')
+#proj4string(koreanPeninsulaCoast) <- CRS("+proj=longlat +datum=WGS84")
+koreanPeninsulaCoast = shapefile("./polyline_korea/polyline_korea.shp") #somehow readOGR(dsn='./polyline_korea/',layer='polyline_korea') won't work on my machine (windows), thus using shapefile command ('raster' needed) instead 
 koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
 
 
@@ -59,6 +61,7 @@ distfromcoast <- gDistance(koreanPeninsulaCoast_utm,clusters_utm,byid=TRUE)
 koreaC14$coastDist = as.numeric(distfromcoast)
 koreaC14$region = 'inland'
 koreaC14$region[which(koreaC14$coastDist<coastalThreshold)]='coastal'
+koreaC14$region[which(koreaC14$coastM == TRUE)]='coastal' # I have questions whether doing this is justifiable after DBSCAN
 
 
 ## test plot:
