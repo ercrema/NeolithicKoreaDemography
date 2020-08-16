@@ -11,7 +11,7 @@ koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
                        c14age=koreaC14$uncal_bp,
                        c14error=koreaC14$uncal_range,
                        material=koreaC14$Material,
-                       coastM=koreaC14$coast_manual,
+                       coastM=koreaC14$coast_manual, #During the Chulmun period, the sites marked with 'T' were located in the coastal area. We know this because a) these sites yielded marine shells such as oyster, b) paleocoastal construction studies at few of these sites suggested the higher sea-level during Chulmun made them coastal site, and c) archaeologists found a wooden dugout boat from one of these sites called 'Bibongri.' 
                        sitename=koreaC14$site_name_eng)
 
 # Data Check #
