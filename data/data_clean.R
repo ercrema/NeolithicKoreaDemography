@@ -3,14 +3,16 @@ koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v9.2.csv",stringsAsFac
 
 ### Clean Data ###
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
-		       labcode=koreaC14$Labcode,
-		       site=koreaC14$Site.name,
-		       latitude=koreaC14$Lat,
-		       longitude=koreaC14$Long,
-		       deltaC13=koreaC14$X13C.0.00.,
-		       c14age=koreaC14$uncal_bp,
-		       c14error=koreaC14$uncal_range,
-		       material=koreaC14$Material)
+                       labcode=koreaC14$Labcode,
+                       site=koreaC14$Site.name,
+                       latitude=koreaC14$Lat,
+                       longitude=koreaC14$Long,
+                       deltaC13=koreaC14$X13C.0.00.,
+                       c14age=koreaC14$uncal_bp,
+                       c14error=koreaC14$uncal_range,
+                       material=koreaC14$Material,
+                       coastM=koreaC14$coast_manual,
+                       sitename=koreaC14$site_name_eng)
 
 # Data Check #
 rownames(koreaC14)=koreaC14$EntryNo
