@@ -49,20 +49,40 @@ sites <- data.frame(SiteID=sites$SiteID,cluster=sites$cluster,clon=sites$clon,cl
 
 koreaC14 = unique(merge(x=koreaC14,y=sites,by.x="SiteID",by.y="SiteID",x.all=TRUE))
 
+### Compute Distance to Coast from Sites
+sitepoints = koreaC14
+sp::coordinates(sitepoints) <- c("longitude","latitude")
+sp::proj4string(sitepoints) <- sp::CRS("+proj=longlat +datum=WGS84")
+sitepoints_utm <- spTransform(sitepoints,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
+koreanPeninsulaCoast_utm <- spTransform(koreanPeninsulaCoast,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
+distfromcoast <- gDistance(koreanPeninsulaCoast_utm,sitepoints_utm,byid=TRUE)
+koreaC14$coastDistSite = as.numeric(distfromcoast)
+koreaC14$region_site = 'inland'
+koreaC14$region_site[which(koreaC14$coastDistSite<coastalThreshold)]='coastal'
+koreaC14$region_site[which(koreaC14$coastM == TRUE)]='coastal' #Manual adjustment
+
 ### Compute Distance to Coast from Cluster Centers
 clusters = koreaC14
 sp::coordinates(clusters) <- c("clon","clat")
 sp::proj4string(clusters) <- sp::CRS("+proj=longlat +datum=WGS84")
 clusters_utm <- spTransform(clusters,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
-koreanPeninsulaCoast_utm <- spTransform(koreanPeninsulaCoast,CRS("+proj=utm +zone=52 ellps=WGS84")) # Project to UTM
-# koreanPeninsula_utm <- spTransform(koreanPeninsula,CRS("+proj=utm +zone=52 ellps=WGS84"))
 distfromcoast <- gDistance(koreanPeninsulaCoast_utm,clusters_utm,byid=TRUE)
-#koreaC14$withinPoly=gContains(koreanPeninsula_utm,clusters_utm,byid=TRUE)
-koreaC14$coastDist = as.numeric(distfromcoast)
-koreaC14$region = 'inland'
-koreaC14$region[which(koreaC14$coastDist<coastalThreshold)]='coastal'
-koreaC14$region[which(koreaC14$coastM == TRUE)]='coastal' # I have questions whether doing this is justifiable after DBSCAN
+koreaC14$coastDistClusters = as.numeric(distfromcoast)
+koreaC14$region_clusters = 'inland'
+koreaC14$region_clusters[which(koreaC14$coastDistClusters<coastalThreshold)]='coastal'
 
+### Check Inconsistencies between cluster based region and site based regio
+inconsistent_clusters=koreaC14[which(koreaC14$region_clusters!=koreaC14$region_site),]$cluster
+
+inconsistent_cases =unique(dplyr::select(subset(koreaC14,cluster%in%c(inconsistent_clusters)),SiteID,sitename,latitude,longitude,clat,clon,coastDistSite,region_site,coastM,coastDistClusters,region_clusters,cluster))  
+
+# All Inconsistencies (for coastalThreshold = 2000 meters and clusteringThreshold = 1km ) are clusters with comprising a single site with manual adjustment (see line details in data_clean.R). 
+
+#Repair inconsistency
+koreaC14$region_clusters=koreaC14$region_site
+
+#Select Relevant fields
+koreaC14 = dplyr::select(koreaC14,labcode,c14age,c14error,material,deltaC13,site_id=SiteID,site_kor=site,site_en=sitename,cluster_id=cluster,latitude,longitude,clat,clon,region=region_clusters)
 
 ## test plot:
 # clusters_utm$region=koreaC14$region
@@ -73,7 +93,7 @@ koreaC14$region[which(koreaC14$coastM == TRUE)]='coastal' # I have questions whe
 
 #### Calibration ####
 caldates <- calibrate(koreaC14$c14age,koreaC14$c14error)
-bins=binPrep(ages=caldates,h=temporalBinSize,sites=koreaC14$cluster)
+bins=binPrep(ages=caldates,h=temporalBinSize,sites=koreaC14$cluster_id)
 
 ### CKDE Random Bootstrapped Samples ####
 set.seed(123)

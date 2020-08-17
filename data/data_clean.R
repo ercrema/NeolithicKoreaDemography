@@ -1,10 +1,10 @@
 ### Read 14C Data ###
-koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v9.2.csv",stringsAsFactors = TRUE)
+koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v9.2.csv",stringsAsFactors = FALSE)
 
 ### Clean Data ###
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
                        labcode=koreaC14$Labcode,
-                       site=koreaC14$Site.name,
+                       site=koreaC14$site_name_kor,
                        latitude=koreaC14$Lat,
                        longitude=koreaC14$Long,
                        deltaC13=koreaC14$X13C.0.00.,
@@ -37,23 +37,25 @@ koreaC14 <- subset(koreaC14,
 
 
 
-koreaC14$SiteID <- as.numeric(koreaC14$site)
+
+# Convert Lat/Lon in numeric
 koreaC14$latitude<-as.numeric(as.character(koreaC14$latitude))
 koreaC14$longitude<-as.numeric(as.character(koreaC14$longitude))
 
 
-problems.id=c()
+#Assign Site ID to unique SiteName-Lat-Lon Combination
+siteList = unique(data.frame(Site=koreaC14$sitename,Latitude=koreaC14$latitude,Longitude=koreaC14$longitude,stringsAsFactors = FALSE))
 
-for (x in 1:length(unique(koreaC14$SiteID)))
-{
-ref=unique(koreaC14$SiteID)[x]	
-tmp=subset(koreaC14,SiteID==ref)
-if(length(unique(tmp$latitude))>1|length(unique(tmp$longitude))>1)
-{
-problems.id=c(problems.id,ref)
-}	
+# Site Names with different coordinates
+subset(siteList,Site%in%c(names(which(table(siteList$Site)>1))))
 
-}	
+siteList$SiteID = 1:nrow(siteList)
+koreaC14$SiteID = NA
+for (i in 1:nrow(koreaC14))
+{
+  k=which(siteList$Site==koreaC14$sitename[i]&siteList$Latitude==koreaC14$latitude[i]&siteList$Longitude==koreaC14$longitude[i])
+  koreaC14$SiteID[i]=siteList$SiteID[k]
+}
 
 
 
