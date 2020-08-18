@@ -49,4 +49,11 @@ logistic.inland.test <- modelTest(caldates[inland.index],bins=bins[inland.index]
 
 # Save Output Image #####
 
-save(coastal.inland.permtest,exp.general.test,exp.coastal.test,exp.inland.test,logistic.general.test,logistic.coastal.test,logistic.inland.test,file='./results_images/test_results.RData')
+# assign NULL to fitobject to reduce image size
+exp.general.test$fitobject=NULL
+exp.coastal.test$fitobject=NULL
+exp.inland.test$fitobject=NULL
+
+save(coastal.inland.permtest,exp.general.test,exp.coastal.test,exp.inland.test,logistic.general.test,logistic.coastal.test,logistic.inland.test,file='test_results.RData')
+
+
