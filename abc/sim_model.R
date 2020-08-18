@@ -28,8 +28,7 @@ sim.model = function(x,caldates,bins,bl,br,c,timeRange=c(7000,3000),simonly=FALS
   if (method=='uncalsample'|method=='both')
   {
     sampled.c14.dates.uncal=sample(d$CRA,size=n,replace=T,prob=d$PrDens)
-    sampled.calibrated.dates.uncal = BchronCalibrate(ages=sampled.c14.dates.uncal,ageSds = sample(errors,replace=TRUE,size=n),calCurves=rep('intcal13',n))
-    sampled.calibrated.dates.uncal = as.CalDates(sampled.calibrated.dates.uncal)
+    sampled.calibrated.dates.uncal = fastCalibrate(x=sampled.c14.dates.uncal,errors = sample(errors,replace=TRUE,size=n))
     sampled.calibrated.dates.uncal$metadata$StartBP=50000
     sampled.calibrated.dates.uncal$metadata$EndBP=0
     sampled.spd.uncal = spd(sampled.calibrated.dates.uncal,timeRange=timeRange,spdnormalised = TRUE,verbose=FALSE)
@@ -38,8 +37,7 @@ sim.model = function(x,caldates,bins,bl,br,c,timeRange=c(7000,3000),simonly=FALS
   if (method=='calsample'|method=='both')
   {
     sampled.c14.dates.cal=sample(d$CRA,size=n,replace=T,prob=d$Raw)
-    sampled.calibrated.dates.cal = BchronCalibrate(ages=sampled.c14.dates.cal,ageSds = sample(errors,replace=TRUE,size=n),calCurves=rep('intcal13',n))
-    sampled.calibrated.dates.cal = as.CalDates(sampled.calibrated.dates.cal)
+    sampled.calibrated.dates.cal = fastCalibrate(x=sampled.c14.dates.cal,errors = sample(errors,replace=TRUE,size=n))
     sampled.calibrated.dates.cal$metadata$StartBP=50000
     sampled.calibrated.dates.cal$metadata$EndBP=0
     sampled.spd.cal = spd(sampled.calibrated.dates.cal,timeRange=timeRange,spdnormalised = TRUE,verbose=FALSE)
