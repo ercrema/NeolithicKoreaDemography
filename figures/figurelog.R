@@ -1,9 +1,13 @@
-# Site Distribution
-licary(rworldmap)
-licary(raster)
-licary(maptools)
+# Load Libraries, Data, and Results ####
+library(raster)
+library(maptools)
+library(rworldmap)
+library(rcarbon)
 load('../data/koreanC14.RData')
-sites.sp <- unique(data.frame(SiteID=koreaC14$SiteID,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
+load('../results_images/test_results.RData')
+
+# Site Distribution Figure ####
+sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
 coast<-getMap(resolution = "high")
 proj4string(coast)
 
@@ -17,7 +21,7 @@ aspect <- terrain(dem, opt='aspect')
 hs <- hillShade(slope, aspect, 40, 270)
 #plot(hs, col=grey(0:100/100), legend=FALSE)
 
-pdf(file = "./figure1.pdf",width = 5,height = 5)
+pdf(file = "./figure_site_map.pdf",width = 5,height = 5)
 plot(coast,col="grey68",xlim=extent(hs)[1:2],ylim=extent(hs)[3:4],border=NA,xlab="",ylab="")
 abline(v=122:135,lwd=0.5,col='grey88')
 abline(h=33:38,lwd=0.5,col='grey88')
@@ -30,30 +34,69 @@ mtext('Longitude',1,1,cex=0.7)
 mtext('Latitude',2,1,cex=0.7)
 dev.off()
 
-# Bin sensitivity analysis
+# Stacked SPD ####
+runm = 100 #smoothing window
+timeRange = c(7000,3000)
+combined.spd=stackspd(x=caldates,timeRange=timeRange,bins=bins,runm = runm,group = koreaC14$region)
+pdf(file = "./figure_stacked_spd.pdf",width = 8,height = 4.5)
+plot(combined.spd)
+dev.off()
 
-# CKDE
-load('../data/koreanC14.RData')
+# CKDE ####
 bw=100
-ckdeRes = ckde(sdates,timeRange=c(7000,3000),bw=bw)
+s.coastal = sampleDates(caldates[which(koreaC14$region=='coastal')],bins=bins[which(koreaC14$region=='coastal')],nsim=1000,boot=FALSE)
+s.inland = sampleDates(caldates[which(koreaC14$region=='inland')],bins=bins[which(koreaC14$region=='inland')],nsim=1000,boot=FALSE)
+ckde.coastal = ckde(s.coastal,timeRange=c(7000,3000),bw=bw)
+ckde.inland = ckde(s.inland,timeRange=c(7000,3000),bw=bw)
 
-pdf(file = "./figure2.pdf",width = 5,height = 5)
-plot(ckdeRes)
-title('Bootstrapped CKDE',cex.main=1,line=1)
-legend(4500,0.001,bty='n',legend=c(paste0('n(bins)=',length(unique(bins))),paste0('n(dates)=',length(caldates)),paste0('bw=',bw)),cex=0.7)
+pdf(file = "./figure_ckde.pdf",width = 7,height = 6)
+par(mfrow=c(2,1),mar=c(4,4,3,1))
+plot(ckde.inland)
+title('Bootstrapped CKDE (Inland Sites)',cex.main=1,line=1)
+legend('topright',bty='n',legend=c(paste0('n(bins)=',length(unique(bins[which(koreaC14$region=='inland')]))),paste0('n(dates)=',length(caldates[which(koreaC14$region=='inland')])),paste0('bw=',bw)),cex=0.7)
 legend('topleft',legend=c('Average CKDE','95% C.I.'),lwd=c(2,5),lty=c(2,1),col=c(1,'lightgrey'),cex=0.7,bty='n')
+plot(ckde.coastal)
+title('Bootstrapped CKDE (Coastal Sites)',cex.main=1,line=1)
+legend('topright',bty='n',legend=c(paste0('n(bins)=',length(unique(bins[which(koreaC14$region=='coastal')]))),paste0('n(dates)=',length(caldates[which(koreaC14$region=='coastal')])),paste0('bw=',bw)),cex=0.7)
 dev.off()
 
-# ModelTest
-load('../results_images/result_standard_analysis.RData')
-pdf(file = "./figure3.pdf",width = 8,height = 4.5)
-par(mfrow=c(1,2),mar=c(4,4,3,1))
-plot(m1,lwd=2)
-lines(m1$fit,lty=2,lwd=1,col='grey22')
-plot(LogCheck,lwd=2)
-lines(LogCheck$fit,lty=2,lwd=1,col='grey22')
-legend('topleft',bg = 'white',legend=c('Observed SPD','Fitted Model','Simulation Envelope','Positive Deviation','Negative Deviation'),lwd=c(2,1,5,5,5),col=c(1,1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)),cex=0.65)
+# Permutation Tests ####
+pdf(file = "./figure_permtest.pdf",width = 7,height = 6)
+par(mfrow=c(2,1))
+plot(coastal.inland.permtest,focalm='coastal')
+title('Coastal SPD',cex.main=1,line=1)
+plot(coastal.inland.permtest,focalm='inland')
+title('Inland SPD',cex.main=1,line=1)
+legend('topright',bty='n',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)),cex=0.7,bg='white')
 dev.off()
+
+
+# Model Tests ####
+pdf(file = "./figure_modelTests.pdf",width = 9,height = 6)
+par(mfcol=c(2,3))
+plot(exp.general.test)
+lines(exp.general.test$fit,lty=2,lwd=1,col='grey22')
+title('Exponential (Combined)')
+legend('topleft',bg = 'white',legend=c('Observed SPD','Fitted Model','Simulation Envelope','Positive Deviation','Negative Deviation'),lwd=c(1,1,5,5,5),col=c(1,1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)),cex=0.68,bty='o',box.lwd=0,lty=c(1,2,1,1,1))
+plot(logistic.general.test)
+lines(logistic.general.test$fit,lty=2,lwd=1,col='grey22')
+title('Logistic (Combined)')
+
+plot(exp.coastal.test)
+lines(exp.coastal.test$fit,lty=2,lwd=1,col='grey22')
+title('Exponential (Coastal)')
+plot(logistic.coastal.test)
+lines(logistic.coastal.test$fit,lty=2,lwd=1,col='grey22')
+title('Logistic (Coastal)')
+
+plot(exp.inland.test)
+lines(exp.inland.test$fit,lty=2,lwd=1,col='grey22')
+title('Exponential (inland)')
+plot(logistic.inland.test)
+lines(logistic.inland.test$fit,lty=2,lwd=1,col='grey22')
+title('Logistic (inland)')
+dev.off()
+
 
 
 # Posterior Distributions
