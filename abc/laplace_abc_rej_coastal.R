@@ -5,7 +5,9 @@ library(doSNOW)
 
 ### Load Observed Data ###
 load('../data/koreanC14.RData')
-
+coastal.koreaC14 = subset(koreaC14,region=='coastal')
+caldates = caldates[which(koreaC14$region=='coastal')]
+bins = bins[which(koreaC14$region=='coastal')]
 ### Load Core Simulation Model and fastCalibrate() function ###
 source('./sim_model.R')
 source('./fastCalibrate.R')
@@ -25,12 +27,12 @@ progress <- function(n) setTxtProgressBar(pb, n)
 opts <- list(progress = progress)
 
 reslist <- foreach (i=1:nsim,.packages=c('rcarbon'),.options.snow = opts) %dopar% {
-  res=sim.model(x=koreaC14,caldates=caldates,bins=bins,bl=bl[i],br=br[i],c=c[i],timeRange=c(7000,3000))
+  res=sim.model(x=coastal.koreaC14,caldates=caldates,bins=bins,bl=bl[i],br=br[i],c=c[i],timeRange=c(7000,3000))
   return(res)
 }
 
 
-save(reslist,file='../results_images/resABC_laplace_general.RData')
+save(reslist,file='../results_images/resABC_laplace_coastal.RData')
 
 bl = unlist(lapply(reslist,function(x){x[[1]]}))
 br = unlist(lapply(reslist,function(x){x[[2]]}))
@@ -39,7 +41,7 @@ euc.uncal = unlist(lapply(reslist,function(x){x[[4]]}))
 euc.cal = unlist(lapply(reslist,function(x){x[[5]]}))
 
 
-abc.general=data.frame(bl=bl,br=br,c=c,euc.uncal=euc.uncal,euc.cal=euc.cal)
+abc.coastal=data.frame(bl=bl,br=br,c=c,euc.uncal=euc.uncal,euc.cal=euc.cal)
 
-save(abc.general,file='../results_images/resABC_laplace_general.RData')
+save(abc.coastal,file='../results_images/resABC_laplace_coastal.RData')
 
