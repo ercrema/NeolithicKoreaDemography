@@ -101,13 +101,14 @@ lines(logistic.inland.test$fit,lty=2,lwd=1,col='grey22')
 title('Logistic (inland)')
 dev.off()
 
-# Posterior Distributions ####
-load('../results_images/resABC_laplace.RData')
+
+# Posterior Distributions (General) ####
+load('../results_images/resABC_laplace_general.RData')
 tol=0.05
 library(coda)
-post = res[order(res$euc.uncal)[1:(nrow(res)*tol)],]
+post = abc.general[order(abc.general$euc.uncal)[1:(nrow(abc.general)*tol)],]
 options(scipen = 9999)
-pdf(file = "./figure4.pdf",width = 10,height = 3.5)
+pdf(file = "./figure_posterior_general.pdf",width = 10,height = 3.5)
 par(mfrow=c(1,3))
 #bl
 bl.hpdi=HPDinterval(mcmc(post$bl),prob = 0.90)
@@ -149,20 +150,130 @@ polygon(x=c(d.c$x,rev(d.c$x)),y=c(d.c$y,rep(0,length(d.c$y))))
 abline(v=median(post$c),lty=2)
 dev.off()
 
+# Posterior Distributions (Coastal vs Inland ) ####
+load('../results_images/resABC_laplace_coastal.RData')
+load('../results_images/resABC_laplace_inland.RData')
+
+tol=0.05
+library(coda)
+post.coastal = abc.coastal[order(abc.coastal$euc.uncal)[1:(nrow(abc.coastal)*tol)],]
+post.inland = abc.inland[order(abc.inland$euc.uncal)[1:(nrow(abc.inland)*tol)],]
+options(scipen = 9999)
+pdf(file = "./figure_posterior_coastal_vs_inland.pdf",width = 10,height = 3.5)
+par(mfrow=c(1,3))
+
+#bl
+bl.hpdi.coastal=HPDinterval(mcmc(post.coastal$bl),prob = 0.90)
+bl.hpdi.inland=HPDinterval(mcmc(post.inland$bl),prob = 0.90)
+
+d.bl.coastal=density(post.coastal$bl)
+d.bl.inland=density(post.inland$bl,bw=d.bl.coastal$bw)
+
+plot(0,0,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE,xlim=range(c(d.bl.coastal$x,d.bl.inland$x)),ylim=range(c(d.bl.coastal$y,d.bl.inland$y)))
+
+title('Growing Phase Growth Rate Posterior')
+axis(1,at=axTicks(1),labels=axTicks(1)*100)
+axis(2)
+hpdi.x.coastal = d.bl.coastal$x[which(d.bl.coastal$x>=bl.hpdi.coastal[1]&d.bl.coastal$x<=bl.hpdi.coastal[2])]
+hpdi.x.inland = d.bl.inland$x[which(d.bl.inland$x>=bl.hpdi.inland[1]&d.bl.inland$x<=bl.hpdi.inland[2])]
+hpdi.y.coastal = d.bl.coastal$y[which(d.bl.coastal$x>=bl.hpdi.coastal[1]&d.bl.coastal$x<=bl.hpdi.coastal[2])]
+hpdi.y.inland = d.bl.inland$y[which(d.bl.inland$x>=bl.hpdi.inland[1]&d.bl.inland$x<=bl.hpdi.inland[2])]
+
+polygon(x=c(hpdi.x.coastal,rev(hpdi.x.coastal)),y=c(hpdi.y.coastal,rep(0,length(hpdi.y.coastal))),border=NA,col=rgb(0.6784314,0.8470588,0.9019608,0.5))
+polygon(x=c(d.bl.coastal$x,rev(d.bl.coastal$x)),y=c(d.bl.coastal$y,rep(0,length(d.bl.coastal$y))),border='lightblue')
+
+polygon(x=c(hpdi.x.inland,rev(hpdi.x.inland)),y=c(hpdi.y.inland,rep(0,length(hpdi.y.inland))),border=NA,col=rgb(1.0000000,0.7529412,0.7960784,0.5))
+polygon(x=c(d.bl.inland$x,rev(d.bl.inland$x)),y=c(d.bl.inland$y,rep(0,length(d.bl.inland$y))),border='lightpink')
+
+abline(v=median(post.coastal$bl),lty=2,col='blue')
+abline(v=median(post.inland$bl),lty=2,col='red')
+legend('topright',legend=c('Coastal','Inland'),fill=c('lightblue','lightpink'))
 
 
-# Posterior Predictive Check ####
-load('../results_images/predcheck_results.RData')
+#br
+br.hpdi.coastal=HPDinterval(mcmc(post.coastal$br),prob = 0.90)
+br.hpdi.inland=HPDinterval(mcmc(post.inland$br),prob = 0.90)
+
+d.br.coastal=density(post.coastal$br)
+d.br.inland=density(post.inland$br,bw=d.br.coastal$bw)
+
+plot(0,0,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE,xlim=range(c(d.br.coastal$x,d.br.inland$x)),ylim=range(c(d.br.coastal$y,d.br.inland$y)))
+
+title('Declining Phase Growth Rate Posterior')
+axis(1,at=axTicks(1),labels=-axTicks(1)*100)
+axis(2)
+hpdi.x.coastal = d.br.coastal$x[which(d.br.coastal$x>=br.hpdi.coastal[1]&d.br.coastal$x<=br.hpdi.coastal[2])]
+hpdi.x.inland = d.br.inland$x[which(d.br.inland$x>=br.hpdi.inland[1]&d.br.inland$x<=br.hpdi.inland[2])]
+hpdi.y.coastal = d.br.coastal$y[which(d.br.coastal$x>=br.hpdi.coastal[1]&d.br.coastal$x<=br.hpdi.coastal[2])]
+hpdi.y.inland = d.br.inland$y[which(d.br.inland$x>=br.hpdi.inland[1]&d.br.inland$x<=br.hpdi.inland[2])]
+
+polygon(x=c(hpdi.x.coastal,rev(hpdi.x.coastal)),y=c(hpdi.y.coastal,rep(0,length(hpdi.y.coastal))),border=NA,col=rgb(0.6784314,0.8470588,0.9019608,0.5))
+polygon(x=c(d.br.coastal$x,rev(d.br.coastal$x)),y=c(d.br.coastal$y,rep(0,length(d.br.coastal$y))),border='lightblue')
+
+polygon(x=c(hpdi.x.inland,rev(hpdi.x.inland)),y=c(hpdi.y.inland,rep(0,length(hpdi.y.inland))),border=NA,col=rgb(1.0000000,0.7529412,0.7960784,0.5))
+polygon(x=c(d.br.inland$x,rev(d.br.inland$x)),y=c(d.br.inland$y,rep(0,length(d.br.inland$y))),border='lightpink')
+
+abline(v=median(post.coastal$br),lty=2,col='blue')
+abline(v=median(post.inland$br),lty=2,col='red')
+
+
+#c
+c.hpdi.coastal=HPDinterval(mcmc(post.coastal$c),prob = 0.90)
+c.hpdi.inland=HPDinterval(mcmc(post.inland$c),prob = 0.90)
+
+d.c.coastal=density(post.coastal$c)
+d.c.inland=density(post.inland$c,bw=d.c.coastal$bw)
+
+
+plot(0,0,type='n',xlab='Cal BP',ylab='Probability Density',axes=FALSE,xlim=rev(range(c(d.c.coastal$x,d.c.inland$x))),ylim=range(c(d.c.coastal$y,d.c.inland$y)))
+
+
+
+title('Change Point Posterior')
+axis(1)
+axis(2)
+
+hpdi.x.coastal = d.c.coastal$x[which(d.c.coastal$x>=c.hpdi.coastal[1]&d.c.coastal$x<=c.hpdi.coastal[2])]
+hpdi.x.inland = d.c.inland$x[which(d.c.inland$x>=c.hpdi.inland[1]&d.c.inland$x<=c.hpdi.inland[2])]
+hpdi.y.coastal = d.c.coastal$y[which(d.c.coastal$x>=c.hpdi.coastal[1]&d.c.coastal$x<=c.hpdi.coastal[2])]
+hpdi.y.inland = d.c.inland$y[which(d.c.inland$x>=c.hpdi.inland[1]&d.c.inland$x<=c.hpdi.inland[2])]
+
+polygon(x=c(hpdi.x.coastal,rev(hpdi.x.coastal)),y=c(hpdi.y.coastal,rep(0,length(hpdi.y.coastal))),border=NA,col=rgb(0.6784314,0.8470588,0.9019608,0.5))
+polygon(x=c(d.c.coastal$x,rev(d.c.coastal$x)),y=c(d.c.coastal$y,rep(0,length(d.c.coastal$y))),border='lightblue')
+
+polygon(x=c(hpdi.x.inland,rev(hpdi.x.inland)),y=c(hpdi.y.inland,rep(0,length(hpdi.y.inland))),border=NA,col=rgb(1.0000000,0.7529412,0.7960784,0.5))
+polygon(x=c(d.c.inland$x,rev(d.c.inland$x)),y=c(d.c.inland$y,rep(0,length(d.c.inland$y))),border='lightpink')
+
+abline(v=median(post.coastal$c),lty=2,col='blue')
+abline(v=median(post.inland$c),lty=2,col='red')
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Posterior Predictive Check (General) ####
+load('../results_images/predcheck_results_general.RData')
 load('../data/koreanC14.RData')
 library(rcarbon)
 observed = spd(caldates,bins,timeRange=c(7000,3000),spdnormalised = TRUE)
-ppmedian=apply(ppcheck.uncal,1,median)
-pplo=apply(ppcheck.uncal,1,quantile,0.025)
-pphi=apply(ppcheck.uncal,1,quantile,0.975)
+ppmedian=apply(ppcheck.cal,1,median)
+pplo=apply(ppcheck.cal,1,quantile,0.025)
+pphi=apply(ppcheck.cal,1,quantile,0.975)
 
-
-
-pdf(file = "./figure5.pdf",width = 4,height = 4)
+pdf(file = "./figure_ppcheck_general.pdf",width = 4,height = 4)
 plot(observed$grid$calBP,observed$grid$PrDens,type='n',xlim=c(7000,3000),ylim=c(0,max(c(observed$grid$PrDens,pphi))),xlab='cal BP',ylab='Summed Probability')
 polygon(c(7000:3000,rev(7000:3000)),c(pplo,rev(pphi)),border=NA,col='lightgrey')
 lines(7000:3000,ppmedian,col=2,lty=2)
@@ -241,3 +352,7 @@ polygon(x=c(hpdi.x,rev(hpdi.x)),y=c(hpdi.y,rep(0,length(hpdi.y))),border=NA,col=
 polygon(x=c(d.event.b$x,rev(d.event.b$x)),y=c(d.event.b$y,rep(0,length(d.event.b$y))))
 abline(v=median(point_b),lty=2)
 dev.off()
+
+# Event Timing Comparison ####
+seedData = read.csv("../data/2016_Neolithic_C14_dates_collection_v9.3.csv",stringsAsFactors = FALSE)
+seedData = subset(seedData,seed_association!=''&uncal_bp>5000)
