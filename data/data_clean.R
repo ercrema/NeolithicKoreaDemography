@@ -1,7 +1,13 @@
+library(dplyr)
+
 ### Read 14C Data ###
 koreaC14<-read.csv("./2016_Neolithic_C14_dates_collection_v9.3.csv",stringsAsFactors = FALSE)
 
 ### Clean Data ###
+koreaC14 <- koreaC14 %>%mutate(milletAsso= case_when(
+  stringr::str_detect(seed_association, "FM") | stringr::str_detect(seed_association, "BM") | 
+    stringr::str_detect(Materail_cmt, "millet") | stringr::str_detect(Materail_cmt, "Millet")  ~ TRUE))
+
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
                        labcode=koreaC14$Labcode,
                        site=koreaC14$site_name_kor,
@@ -12,7 +18,8 @@ koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
                        c14error=koreaC14$uncal_range,
                        material=koreaC14$Material,
                        coastM=koreaC14$coast_manual, #During the Chulmun period, the sites marked with 'T' were located in the coastal area. We know this because a) these sites yielded marine shells such as oyster, b) paleocoastal construction studies at few of these sites suggested the higher sea-level during Chulmun made them coastal site, and c) archaeologists found a wooden dugout boat from one of these sites called 'Bibongri.' 
-                       sitename=koreaC14$site_name_eng)
+                       sitename=koreaC14$site_name_eng,
+                       milletAsso=koreaC14$milletAsso)
 
 # Data Check #
 rownames(koreaC14)=koreaC14$EntryNo
