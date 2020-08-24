@@ -24,7 +24,7 @@ fastCalibrate <- function(x, errors){
   
   for (i in 1:length(x)) {
     tau = errors[i]^2 + tau1^2
-    dens = dnorm(x, mean=mu, sd=sqrt(tau))
+    dens = dnorm(x[i], mean=mu, sd=sqrt(tau))
     dens[dens < eps] <- 0
     dens <- dens/sum(dens)
     dens[dens < eps] <- 0
