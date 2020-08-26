@@ -16,20 +16,22 @@ fastCalibrate <- function(x, errors){
   calBP = calcurve[, 1]
   c14BP = calcurve[, 2]
   calSd = calcurve[, 3]
-  calBPrange = timeRange[1]:timeRange[2]
-  mu = stats::approx(calBP, c14BP, xout = calBPrange, rule = 2)$y
-  tau1 = stats::approx(calBP, calSd, xout = calBPrange,rule = 2)$y
-  
+  calBPrange = seq(max(calcurve),min(calcurve),-1)
+  mu = stats::approx(calBP, c14BP, xout = calBPrange)$y
+  tau1 = stats::approx(calBP, calSd, xout = calBPrange)$y
+
   tempList = vector('list',length=length(x))
   
   for (i in 1:length(x)) {
     tau = errors[i]^2 + tau1^2
     dens = dnorm(x[i], mean=mu, sd=sqrt(tau))
     dens[dens < eps] <- 0
+    
     dens <- dens/sum(dens)
     dens[dens < eps] <- 0
     dens <- dens/sum(dens)
-    tempList[[i]] = list(dens=dens[dens > eps],calBP = calBPrange[dens > eps])
+    
+    tempList[[i]] = list(dens=dens[dens > 0],calBP = calBPrange[dens > 0])
     }
 
     reslist <- vector(mode="list", length=2)
