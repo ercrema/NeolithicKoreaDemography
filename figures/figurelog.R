@@ -404,7 +404,7 @@ dev.off()
 
 
 
-# Event Comparison ####
+# Event Comparison Plot ####
 par(mfrow=c(3,1),mar=c(0,4,1,1))
 
 # Millet SPDs
@@ -450,3 +450,78 @@ mtext('Cal SPD',side=1,line=3,cex=0.7)
 
 
 
+
+# Temporal Distance Plots ####
+a_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
+a_coast.hpdi=HPDinterval(mcmc(a_coast),prob = 0.90)
+a_coast.dens=density(a_coast)
+a_coast.hpdi.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
+a_coast.hpdi.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
+
+
+b_coast=sample(point_b)-sample(post.coastal$c,size=length(point_b))
+b_coast.hpdi=HPDinterval(mcmc(b_coast),prob = 0.90)
+b_coast.dens=density(b_coast)
+b_coast.hpdi.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
+b_coast.hpdi.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
+
+
+a_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
+a_inland.hpdi=HPDinterval(mcmc(a_inland),prob = 0.90)
+a_inland.dens=density(a_inland)
+a_inland.hpdi.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
+a_inland.hpdi.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
+
+
+b_inland=sample(point_b)-sample(post.inland$c,size=length(point_b))
+b_inland.hpdi=HPDinterval(mcmc(b_inland),prob = 0.90)
+b_inland.dens=density(b_inland)
+b_inland.hpdi.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
+b_inland.hpdi.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
+
+
+
+pdf(file = "./figure_climate_vs_changepoint.pdf",width = 7,height = 7)
+par(mfrow=c(2,2),mar=c(5,4,2,1))
+plot(a_coast.dens$x,a_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event A')
+polygon(x=c(a_coast.hpdi.x,rev(a_coast.hpdi.x)),y=c(a_coast.hpdi.y,rep(0,length(a_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_coast.dens$x,rev(a_coast.dens$x)),y=c(a_coast.dens$y,rep(0,length(a_coast.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_coast>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_coast<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+
+plot(b_coast.dens$x,b_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event B')
+polygon(x=c(b_coast.hpdi.x,rev(b_coast.hpdi.x)),y=c(b_coast.hpdi.y,rep(0,length(b_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_coast.dens$x,rev(b_coast.dens$x)),y=c(b_coast.dens$y,rep(0,length(b_coast.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_coast>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_coast<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+plot(a_inland.dens$x,a_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event A')
+polygon(x=c(a_inland.hpdi.x,rev(a_inland.hpdi.x)),y=c(a_inland.hpdi.y,rep(0,length(a_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_inland.dens$x,rev(a_inland.dens$x)),y=c(a_inland.dens$y,rep(0,length(a_inland.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_inland>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_inland<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+
+plot(b_inland.dens$x,b_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event B')
+polygon(x=c(b_inland.hpdi.x,rev(b_inland.hpdi.x)),y=c(b_inland.hpdi.y,rep(0,length(b_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_inland.dens$x,rev(b_inland.dens$x)),y=c(b_inland.dens$y,rep(0,length(b_inland.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_inland>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_inland<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+dev.off()
