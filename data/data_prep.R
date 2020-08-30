@@ -82,7 +82,7 @@ inconsistent_cases =unique(dplyr::select(subset(koreaC14,cluster%in%c(inconsiste
 koreaC14$region_clusters=koreaC14$region_site
 
 #Select Relevant fields
-koreaC14 = dplyr::select(koreaC14,labcode,c14age,c14error,material,deltaC13,site_id=SiteID,site_kor=site,site_en=sitename,cluster_id=cluster,latitude,longitude,clat,clon,region=region_clusters)
+koreaC14 = dplyr::select(koreaC14,labcode,c14age,c14error,material,deltaC13,site_id=SiteID,site_kor=site,site_en=sitename,cluster_id=cluster,latitude,longitude,clat,clon,milletAsso=milletAsso,region=region_clusters)
 
 ## test plot:
 # clusters_utm$region=koreaC14$region

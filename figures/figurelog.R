@@ -6,11 +6,8 @@ library(rcarbon)
 library(Bchron)
 library(coda)
 
-
-load('../data/koreanC14.RData')
-load('../results_images/test_results.RData')
-
 # Site Distribution Figure ####
+load('../data/koreanC14.RData')
 sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
 coast<-getMap(resolution = "high")
 proj4string(coast)
@@ -269,9 +266,9 @@ load('../results_images/predcheck_results_general.RData')
 load('../data/koreanC14.RData')
 library(rcarbon)
 observed = spd(caldates,bins,timeRange=c(7000,3000),spdnormalised = TRUE)
-ppmedian=apply(ppcheck.cal,1,median)
-pplo=apply(ppcheck.cal,1,quantile,0.025)
-pphi=apply(ppcheck.cal,1,quantile,0.975)
+ppmedian=apply(ppcheck.cal.general,1,median)
+pplo=apply(ppcheck.cal.general,1,quantile,0.025)
+pphi=apply(ppcheck.cal.general,1,quantile,0.975)
 
 pdf(file = "./figure_ppcheck_general.pdf",width = 4,height = 4)
 plot(observed$grid$calBP,observed$grid$PrDens,type='n',xlim=c(7000,3000),ylim=c(0,max(c(observed$grid$PrDens,pphi))),xlab='cal BP',ylab='Summed Probability')
@@ -287,8 +284,43 @@ dev.off()
 
 
 
-# Age-Depth Model of Kim 2004 ####
+# Posterior Predictive Check (Coastal vs Inland) ####
+load('../results_images/predcheck_results_coastal.RData')
+load('../results_images/predcheck_results_inland.RData')
+load('../data/koreanC14.RData')
+coastal.index = which(koreaC14$region=='coastal')
+inland.index = which(koreaC14$region=='inland')
 
+observed.coastal = spd(caldates[coastal.index],bins[coastal.index],timeRange=c(7000,3000),spdnormalised = TRUE)
+observed.inland = spd(caldates[inland.index],bins[inland.index],timeRange=c(7000,3000),spdnormalised = TRUE)
+
+ppmedian.coastal=apply(ppcheck.cal.coastal,1,median)
+pplo.coastal=apply(ppcheck.cal.coastal,1,quantile,0.025)
+pphi.coastal=apply(ppcheck.cal.coastal,1,quantile,0.975)
+ppmedian.inland=apply(ppcheck.cal.inland,1,median)
+pplo.inland=apply(ppcheck.cal.inland,1,quantile,0.025)
+pphi.inland=apply(ppcheck.cal.inland,1,quantile,0.975)
+
+pdf(file = "./figure_ppcheck_coastal_vs_inland.pdf",width = 4,height = 8)
+par(mfrow=c(2,1))
+plot(observed.coastal$grid$calBP,observed.coastal$grid$PrDens,type='n',xlim=c(7000,3000),ylim=c(0,max(c(observed.coastal$grid$PrDens,pphi.coastal))),xlab='cal BP',ylab='Summed Probability')
+polygon(c(7000:3000,rev(7000:3000)),c(pplo.coastal,rev(pphi.coastal)),border=NA,col='lightgrey')
+lines(7000:3000,ppmedian.coastal,col=2,lty=2)
+lines(observed.coastal$grid$calBP,observed.coastal$grid$PrDens,lwd=1)
+legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Posterior Predictive Interval'),col=c(1,2,'lightgrey'),lwd=c(1,1,5),lty=c(1,2,1),cex=0.6,bg='white')
+
+plot(observed.inland$grid$calBP,observed.inland$grid$PrDens,type='n',xlim=c(7000,3000),ylim=c(0,max(c(observed.inland$grid$PrDens,pphi.inland))),xlab='cal BP',ylab='Summed Probability')
+polygon(c(7000:3000,rev(7000:3000)),c(pplo.inland,rev(pphi.inland)),border=NA,col='lightgrey')
+lines(7000:3000,ppmedian.inland,col=2,lty=2)
+lines(observed.inland$grid$calBP,observed.inland$grid$PrDens,lwd=1)
+legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Posterior Predictive Interval'),col=c(1,2,'lightgrey'),lwd=c(1,1,5),lty=c(1,2,1),cex=0.6,bg='white')
+
+dev.off()
+
+
+
+
+# Age-Depth Model of Kim 2004 ####
 # Read Kim 2004
 kim2004.dates = read.csv('../data/SSDP_102.Kim.2004-chron.csv',skip=1)
 kim2004.temp  = read.csv('../data/SSDP_102.Kim.2004.csv',skip=1)
@@ -298,31 +330,27 @@ marine20 = read.csv('http://intcal.org/curves/marine20.14c', encoding="UTF-8",sk
 createCalCurve(name='marine20',calAges=marine20[,1],uncalAges=marine20[,2],oneSigma=marine20[,3])
 file.copy(from = 'marine20.rda',to = system.file('data',package='Bchron'))
 
-# Fit Compound Poisson-Gamma chronology model
-# kim2004.model.marine13 = Bchronology(ages=round(kim2004.dates$T2L_SSDP_102_c14_date - kim2004.dates$T2L_SSDP_102_delta_r),ageSds=round(sqrt(kim2004.dates$T2L_SSDP_102_c14_1s_err^2+kim2004.dates$T2L_SSDP_102_delta_r_1s_error^2)),calCurves = rep('marine13',nrow(kim2004.dates)),ids=kim2004.dates$T2L_SSDP_102_labcode,positions=kim2004.dates$T2L_SSDP_102_depth_top,predictPositions=kim2004.temp$T2L_SSDP_102_depth)
-
 kim2004.model.marine20 = Bchronology(ages=round(kim2004.dates$T2L_SSDP_102_c14_date - kim2004.dates$T2L_SSDP_102_delta_r),ageSds=round(sqrt(kim2004.dates$T2L_SSDP_102_c14_1s_err^2+kim2004.dates$T2L_SSDP_102_delta_r_1s_error^2)),calCurves = rep('marine20',nrow(kim2004.dates)),ids=kim2004.dates$T2L_SSDP_102_labcode,positions=kim2004.dates$T2L_SSDP_102_depth_top,predictPositions=kim2004.temp$T2L_SSDP_102_depth)
 
-# Compare predicted ages
-# med.bchron.marine13 = apply(kim2004.model.marine13$thetaPredict,2,median)
-# med.bchron.marine20 = apply(kim2004.model.marine20$thetaPredict,2,median)
-# par(mfrow=c(2,2))
-# plot(kim2004.temp$T2L_SSDP_102_age_medianMedianBacon,med.bchron.marine13,pch=20)
-# abline(a=0,b=1,col='red')
-# plot(kim2004.temp$T2L_SSDP_102_age_medianMedianBacon,med.bchron.marine20,pch=20)
-# abline(a=0,b=1,col='red')
+# Extract Median Dates
+med.bchron.marine20 = apply(kim2004.model.marine20$thetaPredict,2,median)
+
 
 # Plot Median Predicted Temperature Change
 pdf(file = "./figure_kim2004_reanalysis.pdf",width = 6,height = 5.5)
 layout(matrix(c(1,2,1,3),2,2))
 par(mar=c(5,4,1,1))
-plot(3000:7000,med,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)),xlab='cal BP',ylab='temperature (deg C)')
-rect(xleft=med.bchron.marine20[80],xright=med.bchron.marine20[81],ybottom=10,ytop=30,border=NA,col='lightblue')
+plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='cal BP',ylab='temperature (deg C)',axes=F)
+rect(xleft=med.bchron.marine20[80],xright=med.bchron.marine20[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.bchron.marine20,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
-points(med.bchron.marine20[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1)
+points(med.bchron.marine20,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
+points(med.bchron.marine20[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
 text(4949.801,21.89769,'a')
-text(4716.733,20.45735,'b')
-lines(med.bchron.marine20[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],lwd=2,lty=2,col=1)
+text(4700.733,20.45735,'b')
+#lines(med.bchron.marine20[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],lwd=2,lty=2,col=1)
+axis(1,at=seq(7000,3000,-1000),tck=-0.1)
+axis(1,at=seq(7000,3000,-500),tck=-0.07,labels=NA)
+axis(1,at=seq(7000,3000,-100),tck=-0.05,labels=NA)
 
 point_a=kim2004.model.marine20$thetaPredict[,81]
 point_b=kim2004.model.marine20$thetaPredict[,80]
@@ -335,6 +363,8 @@ d.event.b=density(point_b)
 plot(d.event.a$x,d.event.a$y,type='n',xlab='cal BP',ylab='Probability Density',axes=FALSE,xlim=c(5500,4000))
 legend('topright',legend='Timing of a',bty='n',cex=0.8)
 axis(1)
+axis(1,at=seq(7000,3000,-100),tck=-0.03,labels=NA)
+
 axis(2)
 hpdi.x = d.event.a$x[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
 hpdi.y = d.event.a$y[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
@@ -346,6 +376,8 @@ plot(d.event.b$x,d.event.b$y,type='n',xlab='cal BP',ylab='Probability Density',a
 legend('topright',legend='Timing of b',bty='n',cex=0.8)
 axis(1)
 axis(2)
+axis(1,at=seq(7000,3000,-100),tck=-0.03,labels=NA)
+
 hpdi.x = d.event.b$x[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
 hpdi.y = d.event.b$y[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
 polygon(x=c(hpdi.x,rev(hpdi.x)),y=c(hpdi.y,rep(0,length(hpdi.y))),border=NA,col='lightblue')
@@ -353,6 +385,143 @@ polygon(x=c(d.event.b$x,rev(d.event.b$x)),y=c(d.event.b$y,rep(0,length(d.event.b
 abline(v=median(point_b),lty=2)
 dev.off()
 
-# Event Timing Comparison ####
-seedData = read.csv("../data/2016_Neolithic_C14_dates_collection_v9.3.csv",stringsAsFactors = FALSE)
-seedData = subset(seedData,seed_association!=''&uncal_bp>5000)
+# Millet SPD ####
+millet.dates = subset(koreaC14,koreaC14$milletAsso==TRUE)
+millet.caldates = calibrate(millet.dates$c14age,millet.dates$c14error,ids=millet.dates$labcode)
+millet.spd = stackspd(millet.caldates,group=millet.dates$region,timeRange = c(7000,3000),runm=100)
+pdf(file = "./figure_millet_spd.pdf",width = 6,height = 5)
+plot(millet.spd)
+med.dates =medCal(millet.caldates)
+barCodes(med.dates,yrng=c(0,0.002),col=rgb(0,0,0,0.5),width =10)
+dev.off()
+
+pdf(file = "./figure_millet_multiplot.pdf",width = 5,height = 7)
+col=ifelse(millet.dates$region=='inland',rgb(0.99,0.55,0.38),rgb(0.40,0.76,0.65))
+multiplot(millet.caldates,decreasing = TRUE,credMass = TRUE,label = TRUE,col.fill=col,gapFactor = 0.2,rescale=TRUE,cex.id=0.3)
+legend('bottomright',legend=c('Coastal Dates','Inland Dates'),fill=c(rgb(0.40,0.76,0.65),rgb(0.99,0.55,0.38)),bty='n')
+dev.off()
+
+
+
+
+# Event Comparison Plot ####
+par(mfrow=c(3,1),mar=c(0,4,1,1))
+
+# Millet SPDs
+millet.dates = subset(koreaC14,koreaC14$milletAsso==TRUE)
+millet.caldates = calibrate(millet.dates$c14age,millet.dates$c14error)
+millet.spd = stackspd(millet.caldates,group=millet.dates$region,timeRange = c(7000,3000),runm=100)
+coastal.millet = millet.spd$spds$coastal$grid$PrDens
+inland.millet = millet.spd$spds$inland$grid$PrDens
+total.millet = coastal.millet + inland.millet
+
+plot(0,0,xlim=c(7000,3000),ylim=range(total.millet),axes=FALSE,xlab='',ylab='Summed Probability')
+polygon(c(3000:7000,7000:3000),c(inland.millet,rep(0,length(inland.millet))),col=rgb(0.99,0.55,0.38),lwd=0.5,border=rgb(0.99,0.55,0.38))
+polygon(c(3000:7000,7000:3000),c(total.millet,rev(inland.millet)),col=rgb(0.40,0.76,0.65),border=rgb(0.40,0.76,0.65),lwd=0.5)
+axis(2)
+
+# Cooling Event
+plot(0,0,xlim=c(7000,3000),ylim=c(0,max(d.event.a$y,d.event.b$y)),axes=FALSE,xlab='',ylab='Probability')
+hpdi.x = d.event.a$x[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
+hpdi.y = d.event.a$y[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
+polygon(x=c(d.event.a$x,rev(d.event.a$x)),y=c(d.event.a$y,rep(0,length(d.event.a$y))),col=rgb(0.67,0.84,0.9,0.5),border=NA)
+
+hpdi.x = d.event.b$x[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
+hpdi.y = d.event.b$y[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
+polygon(x=c(d.event.b$x,rev(d.event.b$x)),y=c(d.event.b$y,rep(0,length(d.event.b$y))),col=rgb(1,0.71,0.76,0.5),border=NA)
+
+abline(v=median(point_a),lty=2)
+text(median(point_a)+50,y=0.0016,label='Cooling Start (Median)',srt=90,cex=0.8)
+abline(v=median(point_b),lty=2)
+text(median(point_b)+50,y=0.0016,label='Cooling End (Median)',srt=90,cex=0.8)
+axis(2)
+
+
+# Change Point
+par(mar=c(4,4,1,1))
+plot(0,0,xlim=c(7000,3000),ylim=c(0,max(d.c.inland$y,d.c.coastal$y)),axes=FALSE,xlab='',ylab='Probability')
+polygon(x=c(d.c.coastal$x,rev(d.c.coastal$x)),y=c(d.c.coastal$y,rep(0,length(d.c.coastal$y))),col=rgb(0.99,0.55,0.38,0.5))
+polygon(x=c(d.c.inland$x,rev(d.c.inland$x)),y=c(d.c.inland$y,rep(0,length(d.c.inland$y))),col=rgb(0.40,0.76,0.65,0.5))
+axis(2)
+axis(1,at=seq(7000,3000,-1000),tck=-0.1)
+axis(1,at=seq(7000,3000,-500),tck=-0.07,labels=NA)
+axis(1,at=seq(7000,3000,-100),tck=-0.05,labels=NA)
+mtext('Cal SPD',side=1,line=3,cex=0.7)
+
+
+
+
+# Temporal Distance Plots ####
+a_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
+a_coast.hpdi=HPDinterval(mcmc(a_coast),prob = 0.90)
+a_coast.dens=density(a_coast)
+a_coast.hpdi.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
+a_coast.hpdi.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
+
+
+b_coast=sample(point_b)-sample(post.coastal$c,size=length(point_b))
+b_coast.hpdi=HPDinterval(mcmc(b_coast),prob = 0.90)
+b_coast.dens=density(b_coast)
+b_coast.hpdi.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
+b_coast.hpdi.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
+
+
+a_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
+a_inland.hpdi=HPDinterval(mcmc(a_inland),prob = 0.90)
+a_inland.dens=density(a_inland)
+a_inland.hpdi.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
+a_inland.hpdi.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
+
+
+b_inland=sample(point_b)-sample(post.inland$c,size=length(point_b))
+b_inland.hpdi=HPDinterval(mcmc(b_inland),prob = 0.90)
+b_inland.dens=density(b_inland)
+b_inland.hpdi.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
+b_inland.hpdi.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
+
+
+
+pdf(file = "./figure_climate_vs_changepoint.pdf",width = 7,height = 7)
+par(mfrow=c(2,2),mar=c(5,4,2,1))
+plot(a_coast.dens$x,a_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event A')
+polygon(x=c(a_coast.hpdi.x,rev(a_coast.hpdi.x)),y=c(a_coast.hpdi.y,rep(0,length(a_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_coast.dens$x,rev(a_coast.dens$x)),y=c(a_coast.dens$y,rep(0,length(a_coast.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_coast>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_coast<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+
+plot(b_coast.dens$x,b_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event B')
+polygon(x=c(b_coast.hpdi.x,rev(b_coast.hpdi.x)),y=c(b_coast.hpdi.y,rep(0,length(b_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_coast.dens$x,rev(b_coast.dens$x)),y=c(b_coast.dens$y,rep(0,length(b_coast.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_coast>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_coast<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+plot(a_inland.dens$x,a_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event A')
+polygon(x=c(a_inland.hpdi.x,rev(a_inland.hpdi.x)),y=c(a_inland.hpdi.y,rep(0,length(a_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_inland.dens$x,rev(a_inland.dens$x)),y=c(a_inland.dens$y,rep(0,length(a_inland.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_inland>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_inland<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+
+
+plot(b_inland.dens$x,b_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event B')
+polygon(x=c(b_inland.hpdi.x,rev(b_inland.hpdi.x)),y=c(b_inland.hpdi.y,rep(0,length(b_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_inland.dens$x,rev(b_inland.dens$x)),y=c(b_inland.dens$y,rep(0,length(b_inland.dens$y))),border='lightgrey')
+axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+axis(2)
+box()
+text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_inland>0)/1000,2)),cex=0.8)
+text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_inland<0)/1000,2)),cex=0.8)
+abline(v=0,lty=2,lwd=2)
+dev.off()
