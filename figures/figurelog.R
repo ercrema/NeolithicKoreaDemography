@@ -6,6 +6,16 @@ library(rcarbon)
 library(Bchron)
 library(coda)
 
+# Load Results
+load('../results_images/test_results.RData')
+load('../results_images/resABC_laplace_general.RData')
+load('../results_images/resABC_laplace_coastal.RData')
+load('../results_images/resABC_laplace_inland.RData')
+load('../results_images/predcheck_results_general.RData')
+load('../results_images/predcheck_results_coastal.RData')
+load('../results_images/predcheck_results_inland.RData')
+
+
 # Site Distribution Figure ####
 load('../data/koreanC14.RData')
 sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
@@ -246,21 +256,6 @@ abline(v=median(post.inland$c),lty=2,col='red')
 dev.off()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Posterior Predictive Check (General) ####
 load('../results_images/predcheck_results_general.RData')
 load('../data/koreanC14.RData')
@@ -277,12 +272,6 @@ lines(7000:3000,ppmedian,col=2,lty=2)
 lines(observed$grid$calBP,observed$grid$PrDens,lwd=1)
 legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Posterior Predictive Interval'),col=c(1,2,'lightgrey'),lwd=c(1,1,5),lty=c(1,2,1),cex=0.6,bg='white')
 dev.off()
-
-
-
-#  
-
-
 
 # Posterior Predictive Check (Coastal vs Inland) ####
 load('../results_images/predcheck_results_coastal.RData')
@@ -316,8 +305,6 @@ lines(observed.inland$grid$calBP,observed.inland$grid$PrDens,lwd=1)
 legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Posterior Predictive Interval'),col=c(1,2,'lightgrey'),lwd=c(1,1,5),lty=c(1,2,1),cex=0.6,bg='white')
 
 dev.off()
-
-
 
 
 # Age-Depth Model of Kim 2004 ####
@@ -402,11 +389,7 @@ legend('bottomright',legend=c('Coastal Dates','Inland Dates'),fill=c(rgb(0.40,0.
 dev.off()
 
 
-
-
 # Event Comparison Plot ####
-par(mfrow=c(3,1),mar=c(0,4,1,1))
-
 # Millet SPDs
 millet.dates = subset(koreaC14,koreaC14$milletAsso==TRUE)
 millet.caldates = calibrate(millet.dates$c14age,millet.dates$c14error)
@@ -415,10 +398,13 @@ coastal.millet = millet.spd$spds$coastal$grid$PrDens
 inland.millet = millet.spd$spds$inland$grid$PrDens
 total.millet = coastal.millet + inland.millet
 
+pdf(file = "./figure_event_comparisons.pdf",width = 6,height = 9)
+par(mfrow=c(3,1),mar=c(0,4,1,1))
 plot(0,0,xlim=c(7000,3000),ylim=range(total.millet),axes=FALSE,xlab='',ylab='Summed Probability')
 polygon(c(3000:7000,7000:3000),c(inland.millet,rep(0,length(inland.millet))),col=rgb(0.99,0.55,0.38),lwd=0.5,border=rgb(0.99,0.55,0.38))
 polygon(c(3000:7000,7000:3000),c(total.millet,rev(inland.millet)),col=rgb(0.40,0.76,0.65),border=rgb(0.40,0.76,0.65),lwd=0.5)
 axis(2)
+legend('topleft',legend='a',bty='n',cex=2)
 
 # Cooling Event
 plot(0,0,xlim=c(7000,3000),ylim=c(0,max(d.event.a$y,d.event.b$y)),axes=FALSE,xlab='',ylab='Probability')
@@ -435,6 +421,7 @@ text(median(point_a)+50,y=0.0016,label='Cooling Start (Median)',srt=90,cex=0.8)
 abline(v=median(point_b),lty=2)
 text(median(point_b)+50,y=0.0016,label='Cooling End (Median)',srt=90,cex=0.8)
 axis(2)
+legend('topleft',legend='b',bty='n',cex=2)
 
 
 # Change Point
@@ -443,48 +430,63 @@ plot(0,0,xlim=c(7000,3000),ylim=c(0,max(d.c.inland$y,d.c.coastal$y)),axes=FALSE,
 polygon(x=c(d.c.coastal$x,rev(d.c.coastal$x)),y=c(d.c.coastal$y,rep(0,length(d.c.coastal$y))),col=rgb(0.99,0.55,0.38,0.5))
 polygon(x=c(d.c.inland$x,rev(d.c.inland$x)),y=c(d.c.inland$y,rep(0,length(d.c.inland$y))),col=rgb(0.40,0.76,0.65,0.5))
 axis(2)
-axis(1,at=seq(7000,3000,-1000),tck=-0.1)
-axis(1,at=seq(7000,3000,-500),tck=-0.07,labels=NA)
-axis(1,at=seq(7000,3000,-100),tck=-0.05,labels=NA)
-mtext('Cal SPD',side=1,line=3,cex=0.7)
-
+axis(1,at=seq(7000,3000,-1000),tck=-0.05)
+axis(1,at=seq(7000,3000,-500),tck=-0.02,labels=NA)
+axis(1,at=seq(7000,3000,-100),tck=-0.01,labels=NA)
+mtext('Cal BP',side=1,line=3,cex=0.7)
+legend('topleft',legend='c',bty='n',cex=2)
+legend('topright',legend=c('Inland','Coastal'),fill=c(rgb(0.40,0.76,0.65),rgb(0.99,0.55,0.38)),bty='n')
+dev.off()
 
 
 
 # Temporal Distance Plots ####
 a_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
-a_coast.hpdi=HPDinterval(mcmc(a_coast),prob = 0.90)
+a_coast.hpdi_left=c(HPDinterval(mcmc(a_coast),prob = 0.90)[1],0)
+a_coast.hpdi_right=c(0,HPDinterval(mcmc(a_coast),prob = 0.90)[2])
 a_coast.dens=density(a_coast)
-a_coast.hpdi.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
-a_coast.hpdi.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi[1]&a_coast.dens$x<=a_coast.hpdi[2])]
+a_coast.hpdi.left.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi_left[1]&a_coast.dens$x<=a_coast.hpdi_left[2])]
+a_coast.hpdi.left.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi_left[1]&a_coast.dens$x<=a_coast.hpdi_left[2])]
+a_coast.hpdi.right.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi_right[1]&a_coast.dens$x<=a_coast.hpdi_right[2])]
+a_coast.hpdi.right.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi_right[1]&a_coast.dens$x<=a_coast.hpdi_right[2])]
 
 
-b_coast=sample(point_b)-sample(post.coastal$c,size=length(point_b))
-b_coast.hpdi=HPDinterval(mcmc(b_coast),prob = 0.90)
+b_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
+b_coast.hpdi_left=c(HPDinterval(mcmc(b_coast),prob = 0.90)[1],0)
+b_coast.hpdi_right=c(0,HPDinterval(mcmc(b_coast),prob = 0.90)[2])
 b_coast.dens=density(b_coast)
-b_coast.hpdi.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
-b_coast.hpdi.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi[1]&b_coast.dens$x<=b_coast.hpdi[2])]
-
+b_coast.hpdi.left.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi_left[1]&b_coast.dens$x<=b_coast.hpdi_left[2])]
+b_coast.hpdi.left.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi_left[1]&b_coast.dens$x<=b_coast.hpdi_left[2])]
+b_coast.hpdi.right.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi_right[1]&b_coast.dens$x<=b_coast.hpdi_right[2])]
+b_coast.hpdi.right.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi_right[1]&b_coast.dens$x<=b_coast.hpdi_right[2])]
 
 a_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
-a_inland.hpdi=HPDinterval(mcmc(a_inland),prob = 0.90)
+a_inland.hpdi_left=c(HPDinterval(mcmc(a_inland),prob = 0.90)[1],0)
+a_inland.hpdi_right=c(0,HPDinterval(mcmc(a_inland),prob = 0.90)[2])
 a_inland.dens=density(a_inland)
-a_inland.hpdi.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
-a_inland.hpdi.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi[1]&a_inland.dens$x<=a_inland.hpdi[2])]
+a_inland.hpdi.left.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi_left[1]&a_inland.dens$x<=a_inland.hpdi_left[2])]
+a_inland.hpdi.left.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi_left[1]&a_inland.dens$x<=a_inland.hpdi_left[2])]
+a_inland.hpdi.right.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi_right[1]&a_inland.dens$x<=a_inland.hpdi_right[2])]
+a_inland.hpdi.right.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi_right[1]&a_inland.dens$x<=a_inland.hpdi_right[2])]
 
 
-b_inland=sample(point_b)-sample(post.inland$c,size=length(point_b))
-b_inland.hpdi=HPDinterval(mcmc(b_inland),prob = 0.90)
+b_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
+b_inland.hpdi_left=c(HPDinterval(mcmc(b_inland),prob = 0.90)[1],0)
+b_inland.hpdi_right=c(0,HPDinterval(mcmc(b_inland),prob = 0.90)[2])
 b_inland.dens=density(b_inland)
-b_inland.hpdi.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
-b_inland.hpdi.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi[1]&b_inland.dens$x<=b_inland.hpdi[2])]
+b_inland.hpdi.left.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi_left[1]&b_inland.dens$x<=b_inland.hpdi_left[2])]
+b_inland.hpdi.left.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi_left[1]&b_inland.dens$x<=b_inland.hpdi_left[2])]
+b_inland.hpdi.right.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi_right[1]&b_inland.dens$x<=b_inland.hpdi_right[2])]
+b_inland.hpdi.right.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi_right[1]&b_inland.dens$x<=b_inland.hpdi_right[2])]
 
 
 
 pdf(file = "./figure_climate_vs_changepoint.pdf",width = 7,height = 7)
 par(mfrow=c(2,2),mar=c(5,4,2,1))
 plot(a_coast.dens$x,a_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event A')
-polygon(x=c(a_coast.hpdi.x,rev(a_coast.hpdi.x)),y=c(a_coast.hpdi.y,rep(0,length(a_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_coast.hpdi.left.x,rev(a_coast.hpdi.left.x)),y=c(a_coast.hpdi.left.y,rep(0,length(a_coast.hpdi.left.y))),border=NA,col='lightblue')
+polygon(x=c(a_coast.hpdi.right.x,rev(a_coast.hpdi.right.x)),y=c(a_coast.hpdi.right.y,rep(0,length(a_coast.hpdi.right.y))),border=NA,col='lightpink')
+
 polygon(x=c(a_coast.dens$x,rev(a_coast.dens$x)),y=c(a_coast.dens$y,rep(0,length(a_coast.dens$y))),border='lightgrey')
 axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
 axis(2)
@@ -495,7 +497,9 @@ abline(v=0,lty=2,lwd=2)
 
 
 plot(b_coast.dens$x,b_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event B')
-polygon(x=c(b_coast.hpdi.x,rev(b_coast.hpdi.x)),y=c(b_coast.hpdi.y,rep(0,length(b_coast.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_coast.hpdi.left.x,rev(b_coast.hpdi.left.x)),y=c(b_coast.hpdi.left.y,rep(0,length(b_coast.hpdi.left.y))),border=NA,col='lightblue')
+polygon(x=c(b_coast.hpdi.right.x,rev(b_coast.hpdi.right.x)),y=c(b_coast.hpdi.right.y,rep(0,length(b_coast.hpdi.right.y))),border=NA,col='lightpink')
+
 polygon(x=c(b_coast.dens$x,rev(b_coast.dens$x)),y=c(b_coast.dens$y,rep(0,length(b_coast.dens$y))),border='lightgrey')
 axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
 axis(2)
@@ -505,7 +509,10 @@ text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',roun
 abline(v=0,lty=2,lwd=2)
 
 plot(a_inland.dens$x,a_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event A')
-polygon(x=c(a_inland.hpdi.x,rev(a_inland.hpdi.x)),y=c(a_inland.hpdi.y,rep(0,length(a_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(a_inland.hpdi.left.x,rev(a_inland.hpdi.left.x)),y=c(a_inland.hpdi.left.y,rep(0,length(a_inland.hpdi.left.y))),border=NA,col='lightblue')
+polygon(x=c(a_inland.hpdi.right.x,rev(a_inland.hpdi.right.x)),y=c(a_inland.hpdi.right.y,rep(0,length(a_inland.hpdi.right.y))),border=NA,col='lightpink')
+
+
 polygon(x=c(a_inland.dens$x,rev(a_inland.dens$x)),y=c(a_inland.dens$y,rep(0,length(a_inland.dens$y))),border='lightgrey')
 axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
 axis(2)
@@ -516,7 +523,8 @@ abline(v=0,lty=2,lwd=2)
 
 
 plot(b_inland.dens$x,b_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event B')
-polygon(x=c(b_inland.hpdi.x,rev(b_inland.hpdi.x)),y=c(b_inland.hpdi.y,rep(0,length(b_inland.hpdi.y))),border=NA,col='lightblue')
+polygon(x=c(b_inland.hpdi.left.x,rev(b_inland.hpdi.left.x)),y=c(b_inland.hpdi.left.y,rep(0,length(b_inland.hpdi.left.y))),border=NA,col='lightblue')
+polygon(x=c(b_inland.hpdi.right.x,rev(b_inland.hpdi.right.x)),y=c(b_inland.hpdi.right.y,rep(0,length(b_inland.hpdi.right.y))),border=NA,col='lightpink')
 polygon(x=c(b_inland.dens$x,rev(b_inland.dens$x)),y=c(b_inland.dens$y,rep(0,length(b_inland.dens$y))),border='lightgrey')
 axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
 axis(2)
@@ -525,3 +533,4 @@ text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(
 text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_inland<0)/1000,2)),cex=0.8)
 abline(v=0,lty=2,lwd=2)
 dev.off()
+
