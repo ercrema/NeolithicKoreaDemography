@@ -338,7 +338,7 @@ text(4700.733,20.45735,'b')
 axis(1,at=seq(7000,3000,-1000),tck=-0.1)
 axis(1,at=seq(7000,3000,-500),tck=-0.07,labels=NA)
 axis(1,at=seq(7000,3000,-100),tck=-0.05,labels=NA)
-
+axis(2)
 point_a=kim2004.model.marine20$thetaPredict[,81]
 point_b=kim2004.model.marine20$thetaPredict[,80]
 
@@ -451,7 +451,7 @@ a_coast.hpdi.right.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi_right[1
 a_coast.hpdi.right.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi_right[1]&a_coast.dens$x<=a_coast.hpdi_right[2])]
 
 
-b_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
+b_coast=sample(point_b)-sample(post.coastal$c,size=length(point_a))
 b_coast.hpdi_left=c(HPDinterval(mcmc(b_coast),prob = 0.90)[1],0)
 b_coast.hpdi_right=c(0,HPDinterval(mcmc(b_coast),prob = 0.90)[2])
 b_coast.dens=density(b_coast)
@@ -470,7 +470,7 @@ a_inland.hpdi.right.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi_rig
 a_inland.hpdi.right.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi_right[1]&a_inland.dens$x<=a_inland.hpdi_right[2])]
 
 
-b_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
+b_inland=sample(point_b)-sample(post.inland$c,size=length(point_a))
 b_inland.hpdi_left=c(HPDinterval(mcmc(b_inland),prob = 0.90)[1],0)
 b_inland.hpdi_right=c(0,HPDinterval(mcmc(b_inland),prob = 0.90)[2])
 b_inland.dens=density(b_inland)
