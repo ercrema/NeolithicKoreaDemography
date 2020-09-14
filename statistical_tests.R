@@ -11,8 +11,14 @@ ncores = 6 #number of cores
 coastal.index = which(koreaC14$region=='coastal')
 inland.index = which(koreaC14$region=='inland')
 
-# Permutation Test ####
+# Permutation Test (Coastal vs Inland) ####
 coastal.inland.permtest = permTest(caldates,marks=koreaC14$region,timeRange=timeRange,bins=bins,nsim=nsim,runm=runm)
+
+# Permutation Test ####
+koreaC14$milletAsso[which(koreaC14$milletAsso)]='yes'
+koreaC14$milletAsso[is.na(koreaC14$milletAsso)]='no'
+allDates=calibrate(koreaC14$c14age,koreaC14$c14error)
+millet.permtest=permTest(allDates,marks=koreaC14$milletAsso,timeRange=timeRange,runm=runm,nsim=nsim)
 
 # Theoretical Growth Model Tests ####
 
@@ -54,6 +60,6 @@ exp.general.test$fitobject=NULL
 exp.coastal.test$fitobject=NULL
 exp.inland.test$fitobject=NULL
 
-save(coastal.inland.permtest,exp.general.test,exp.coastal.test,exp.inland.test,logistic.general.test,logistic.coastal.test,logistic.inland.test,file='test_results.RData')
+save(coastal.inland.permtest,millet.permtest,exp.general.test,exp.coastal.test,exp.inland.test,logistic.general.test,logistic.coastal.test,logistic.inland.test,file='./results_images/test_results.RData')
 
 

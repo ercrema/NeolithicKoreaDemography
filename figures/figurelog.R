@@ -6,15 +6,17 @@ library(rcarbon)
 library(Bchron)
 library(coda)
 
-# Load Results
+# Load Results & Data
+kim2004.dates = read.csv('../data/SSDP_102.Kim.2004-chron.csv',skip = 1)
+kim2004.temp = read.csv('../data/SSDP_102.Kim.2004.csv',skip=1)
 load('../results_images/test_results.RData')
+load('../results_images/kim2004_agedepthmodel.RData')
 load('../results_images/resABC_laplace_general.RData')
 load('../results_images/resABC_laplace_coastal.RData')
 load('../results_images/resABC_laplace_inland.RData')
 load('../results_images/predcheck_results_general.RData')
 load('../results_images/predcheck_results_coastal.RData')
 load('../results_images/predcheck_results_inland.RData')
-
 
 # Site Distribution Figure ####
 load('../data/koreanC14.RData')
@@ -161,7 +163,7 @@ dev.off()
 load('../results_images/resABC_laplace_coastal.RData')
 load('../results_images/resABC_laplace_inland.RData')
 
-tol=0.05
+tol=0.01
 library(coda)
 post.coastal = abc.coastal[order(abc.coastal$euc.uncal)[1:(nrow(abc.coastal)*tol)],]
 post.inland = abc.inland[order(abc.inland$euc.uncal)[1:(nrow(abc.inland)*tol)],]
@@ -306,24 +308,7 @@ legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Po
 
 dev.off()
 
-
-# Age-Depth Model of Kim 2004 ####
-# Read Kim 2004
-kim2004.dates = read.csv('../data/SSDP_102.Kim.2004-chron.csv',skip=1)
-kim2004.temp  = read.csv('../data/SSDP_102.Kim.2004.csv',skip=1)
-
-# Read marine20 calibration curve
-marine20 = read.csv('http://intcal.org/curves/marine20.14c', encoding="UTF-8",skip=11,header=F)
-createCalCurve(name='marine20',calAges=marine20[,1],uncalAges=marine20[,2],oneSigma=marine20[,3])
-file.copy(from = 'marine20.rda',to = system.file('data',package='Bchron'))
-
-kim2004.model.marine20 = Bchronology(ages=round(kim2004.dates$T2L_SSDP_102_c14_date - kim2004.dates$T2L_SSDP_102_delta_r),ageSds=round(sqrt(kim2004.dates$T2L_SSDP_102_c14_1s_err^2+kim2004.dates$T2L_SSDP_102_delta_r_1s_error^2)),calCurves = rep('marine20',nrow(kim2004.dates)),ids=kim2004.dates$T2L_SSDP_102_labcode,positions=kim2004.dates$T2L_SSDP_102_depth_top,predictPositions=kim2004.temp$T2L_SSDP_102_depth)
-
-# Extract Median Dates
-med.bchron.marine20 = apply(kim2004.model.marine20$thetaPredict,2,median)
-
-
-# Plot Median Predicted Temperature Change
+# Age-Depth Model of Akkenone based SST from Kim 2004
 pdf(file = "./figure_kim2004_reanalysis.pdf",width = 6,height = 5.5)
 layout(matrix(c(1,2,1,3),2,2))
 par(mar=c(5,4,1,1))
@@ -388,6 +373,12 @@ multiplot(millet.caldates,decreasing = TRUE,credMass = TRUE,label = TRUE,col.fil
 legend('bottomright',legend=c('Coastal Dates','Inland Dates'),fill=c(rgb(0.40,0.76,0.65),rgb(0.99,0.55,0.38)),bty='n')
 dev.off()
 
+# Millet Permutations Test ####
+pdf(file = "./figure_permtest_millet.pdf",width = 6,height = 5)
+plot(millet.permtest,focalm='yes')
+legend('topright',bty='n',legend=c('Millet SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)),cex=0.7,bg='white')
+barCodes(med.dates,yrng=c(0,0.002),col=rgb(0,0,0,0.5),width =10)
+dev.off()
 
 # Event Comparison Plot ####
 # Millet SPDs
