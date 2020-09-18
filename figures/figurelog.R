@@ -7,19 +7,17 @@ library(Bchron)
 library(coda)
 
 # Load Results & Data
-kim2004.dates = read.csv('../data/SSDP_102.Kim.2004-chron.csv',skip = 1)
-kim2004.temp = read.csv('../data/SSDP_102.Kim.2004.csv',skip=1)
-load('../results_images/test_results.RData')
-load('../results_images/kim2004_agedepthmodel.RData')
-load('../results_images/resABC_laplace_general.RData')
-load('../results_images/resABC_laplace_coastal.RData')
-load('../results_images/resABC_laplace_inland.RData')
-load('../results_images/predcheck_results_general.RData')
-load('../results_images/predcheck_results_coastal.RData')
-load('../results_images/predcheck_results_inland.RData')
+load('../R_image_files/koreanC14.RData')
+load('../R_image_files/spd_test_results.RData')
+load('../R_image_files/kim2004_agedepthmodel.RData')
+load('../R_image_files/resABC_laplace_general.RData')
+load('../R_image_files/resABC_laplace_coastal.RData')
+load('../R_image_files/resABC_laplace_inland.RData')
+load('../R_image_files/predcheck_results_general.RData')
+load('../R_image_files/predcheck_results_coastal.RData')
+load('../R_image_files/predcheck_results_inland.RData')
 
 # Site Distribution Figure ####
-load('../data/koreanC14.RData')
 sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,latitude=koreaC14$latitude,longitude=koreaC14$longitude))
 coast<-getMap(resolution = "high")
 proj4string(coast)
@@ -56,12 +54,6 @@ plot(combined.spd)
 dev.off()
 
 # CKDE ####
-bw=100
-s.coastal = sampleDates(caldates[which(koreaC14$region=='coastal')],bins=bins[which(koreaC14$region=='coastal')],nsim=1000,boot=FALSE)
-s.inland = sampleDates(caldates[which(koreaC14$region=='inland')],bins=bins[which(koreaC14$region=='inland')],nsim=1000,boot=FALSE)
-ckde.coastal = ckde(s.coastal,timeRange=c(7000,3000),bw=bw)
-ckde.inland = ckde(s.inland,timeRange=c(7000,3000),bw=bw)
-
 pdf(file = "./figure_ckde.pdf",width = 7,height = 6)
 par(mfrow=c(2,1),mar=c(4,4,3,1))
 plot(ckde.inland)
@@ -112,7 +104,6 @@ dev.off()
 
 
 # Posterior Distributions (General) ####
-load('../results_images/resABC_laplace_general.RData')
 tol=0.05
 library(coda)
 post = abc.general[order(abc.general$euc.uncal)[1:(nrow(abc.general)*tol)],]
@@ -160,9 +151,6 @@ abline(v=median(post$c),lty=2)
 dev.off()
 
 # Posterior Distributions (Coastal vs Inland ) ####
-load('../results_images/resABC_laplace_coastal.RData')
-load('../results_images/resABC_laplace_inland.RData')
-
 tol=0.01
 library(coda)
 post.coastal = abc.coastal[order(abc.coastal$euc.uncal)[1:(nrow(abc.coastal)*tol)],]
@@ -259,8 +247,6 @@ dev.off()
 
 
 # Posterior Predictive Check (General) ####
-load('../results_images/predcheck_results_general.RData')
-load('../data/koreanC14.RData')
 library(rcarbon)
 observed = spd(caldates,bins,timeRange=c(7000,3000),spdnormalised = TRUE)
 ppmedian=apply(ppcheck.cal.general,1,median)
@@ -276,9 +262,6 @@ legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Po
 dev.off()
 
 # Posterior Predictive Check (Coastal vs Inland) ####
-load('../results_images/predcheck_results_coastal.RData')
-load('../results_images/predcheck_results_inland.RData')
-load('../data/koreanC14.RData')
 coastal.index = which(koreaC14$region=='coastal')
 inland.index = which(koreaC14$region=='inland')
 
