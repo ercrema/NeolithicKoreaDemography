@@ -1,7 +1,7 @@
 library(Bchron)
 # Read Kim 2004
-kim2004.dates = read.csv('./data/SSDP_102.Kim.2004-chron.csv',skip=1)
-kim2004.temp  = read.csv('./data/SSDP_102.Kim.2004.csv',skip=1)
+kim2004.dates = read.csv('../data/kim2004/SSDP_102.Kim.2004-chron.csv',skip=1)
+kim2004.temp  = read.csv('../data/kim2004/SSDP_102.Kim.2004.csv',skip=1)
 
 # Read marine20 calibration curve
 marine20 = read.csv('http://intcal.org/curves/marine20.14c', encoding="UTF-8",skip=11,header=F)
