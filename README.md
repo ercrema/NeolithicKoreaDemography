@@ -9,7 +9,7 @@ The repository is organised in the following main directories:
   - ./Rimages ... contains R image files with results
   - ./data ... contains all datasets required for the analysis
   - ./src ... contains additional bespoke R functions for Approximate Bayesian Computation
-  - ./figures ... contains all figure for the paper and the supplementaty material as well as the R script required to generate them (`figurelog.R`)
+  - ./figures_and_results ... contains all figures and results summaries as well as the R script required to generate them (`figurelog.R` and `results_summary.R`)
   
 ## Data Sets and Data Preparation
 
@@ -45,7 +45,6 @@ The files `./runscript/abc_rej_*.R` includes the R scripts for run the Approxima
 
 # File Structure
 
-```
 .
 ├── data
 │   ├── kim2004
@@ -63,7 +62,9 @@ The files `./runscript/abc_rej_*.R` includes the R scripts for run the Approxima
 │       ├── polyline_korea.shp
 │       ├── polyline_korea.shp.xml
 │       └── polyline_korea.shx
-├── figures
+├── figures_and_results
+│   ├── abc_result_hpd90.csv
+│   ├── age_depth_hpd90.csv
 │   ├── figure_ckde.pdf
 │   ├── figure_climate_vs_changepoint.pdf
 │   ├── figure_event_comparisons.pdf
@@ -79,7 +80,9 @@ The files `./runscript/abc_rej_*.R` includes the R scripts for run the Approxima
 │   ├── figure_ppcheck_coastal_vs_inland.pdf
 │   ├── figure_ppcheck_general.pdf
 │   ├── figure_site_map.pdf
-│   └── figure_stacked_spd.pdf
+│   ├── figure_stacked_spd.pdf
+│   ├── nhst_result.csv
+│   └── results_summary.R
 ├── README.md
 ├── R_image_files
 │   ├── kim2004_agedepthmodel.RData
@@ -108,6 +111,7 @@ The files `./runscript/abc_rej_*.R` includes the R scripts for run the Approxima
 └── src
     ├── fastCalibrate.R
     └── sim_model.R
+```
 ```
 
 
