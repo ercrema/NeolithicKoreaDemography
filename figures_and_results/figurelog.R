@@ -5,6 +5,7 @@ library(rworldmap)
 library(rcarbon)
 library(Bchron)
 library(coda)
+library(latex2exp)
 
 # Load Results & Data
 load('../R_image_files/koreanC14.RData')
@@ -104,7 +105,7 @@ dev.off()
 
 
 # Posterior Distributions (General) ####
-tol=0.05
+tol=0.01
 library(coda)
 post = abc.general[order(abc.general$euc.uncal)[1:(nrow(abc.general)*tol)],]
 options(scipen = 9999)
@@ -114,7 +115,7 @@ par(mfrow=c(1,3))
 bl.hpdi=HPDinterval(mcmc(post$bl),prob = 0.90)
 d.bl=density(post$bl)
 plot(d.bl$x,d.bl$y,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE)
-title('Growing Phase Growth Rate Posterior')
+title(TeX('$r_1$ Posterior'))
 axis(1,at=axTicks(1),labels=axTicks(1)*100)
 axis(2)
 hpdi.x = d.bl$x[which(d.bl$x>=bl.hpdi[1]&d.bl$x<=bl.hpdi[2])]
@@ -127,7 +128,7 @@ abline(v=median(post$bl),lty=2)
 br.hpdi=HPDinterval(mcmc(post$br),prob = 0.90)
 d.br=density(post$br)
 plot(d.br$x,d.br$y,type='n',xlab='% Growth Rate',ylab='Probability Density',axes=FALSE)
-title('Declining Phase Growth Rate Posterior')
+title(TeX('$r_2$ Posterior'))
 axis(1,at=axTicks(1),labels=-axTicks(1)*100)
 axis(2)
 hpdi.x = d.br$x[which(d.br$x>=br.hpdi[1]&d.br$x<=br.hpdi[2])]
@@ -140,7 +141,7 @@ abline(v=median(post$br),lty=2)
 c.hpdi=HPDinterval(mcmc(post$c),prob = 0.90)
 d.c=density(post$c)
 plot(d.c$x,d.c$y,type='n',xlab='Cal BP',ylab='Probability Density',axes=FALSE,xlim=rev(range(d.c$x)))
-title('Change Point Posterior')
+title(TeX('$c$ Posterior'))
 axis(1)
 axis(2)
 hpdi.x = d.c$x[which(d.c$x>=c.hpdi[1]&d.c$x<=c.hpdi[2])]
@@ -168,7 +169,7 @@ d.bl.inland=density(post.inland$bl,bw=d.bl.coastal$bw)
 
 plot(0,0,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE,xlim=range(c(d.bl.coastal$x,d.bl.inland$x)),ylim=range(c(d.bl.coastal$y,d.bl.inland$y)))
 
-title('Growing Phase Growth Rate Posterior')
+title(TeX('$r_1$ Posterior'))
 axis(1,at=axTicks(1),labels=axTicks(1)*100)
 axis(2)
 hpdi.x.coastal = d.bl.coastal$x[which(d.bl.coastal$x>=bl.hpdi.coastal[1]&d.bl.coastal$x<=bl.hpdi.coastal[2])]
@@ -196,7 +197,7 @@ d.br.inland=density(post.inland$br,bw=d.br.coastal$bw)
 
 plot(0,0,type='n',xlab='% Annual Growth Rate',ylab='Probability Density',axes=FALSE,xlim=range(c(d.br.coastal$x,d.br.inland$x)),ylim=range(c(d.br.coastal$y,d.br.inland$y)))
 
-title('Declining Phase Growth Rate Posterior')
+title(TeX('$r_2$ Posterior'))
 axis(1,at=axTicks(1),labels=-axTicks(1)*100)
 axis(2)
 hpdi.x.coastal = d.br.coastal$x[which(d.br.coastal$x>=br.hpdi.coastal[1]&d.br.coastal$x<=br.hpdi.coastal[2])]
@@ -226,7 +227,7 @@ plot(0,0,type='n',xlab='Cal BP',ylab='Probability Density',axes=FALSE,xlim=rev(r
 
 
 
-title('Change Point Posterior')
+title(TeX('$c$ Posterior'))
 axis(1)
 axis(2)
 
@@ -291,7 +292,7 @@ legend('topleft',legend=c('Observed','Median Posterior Predictive Check','95% Po
 
 dev.off()
 
-# Age-Depth Model of Akkenone based SST from Kim 2004
+# Age-Depth Model of Akkenone based SST from Kim 2004 ####
 pdf(file = "./figure_kim2004_reanalysis.pdf",width = 6,height = 5.5)
 layout(matrix(c(1,2,1,3),2,2))
 par(mar=c(5,4,1,1))
