@@ -25,13 +25,9 @@ par(mfrow=c(1,2),mar=c(4,3,3,1))
 ## Left Panel:
 
 # Create SpatialPointsDataFrame
-sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,
-                              latitude=koreaC14$latitude,
-                              longitude=koreaC14$longitude,
-                              region=koreaC14$region))
+sites.sp <- unique(data.frame(SiteID=koreaC14$site_id,latitude=koreaC14$latitude,longitude=koreaC14$longitude,region=koreaC14$region))
 coordinates(sites.sp) <- c("longitude","latitude")
-proj4string(sites.sp) <- 
-  CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
+proj4string(sites.sp) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 
 # Get Background
 coast <- getMap(resolution = "high")
@@ -62,14 +58,70 @@ dev.off()
 
 
 ## Figure 2 ####
+boomBust.inland=plot(coastal.inland.permtest,bbty='b',focalm='inland')
+boomBust.coastal=plot(coastal.inland.permtest,bbty='b',focalm='coastal')
+
 pdf(file = "./figure2.pdf",width = 3.4,height = 4,pointsize=1.5)
 par(mfrow=c(2,1),mar=c(5,4,2,1.1))
-plot(coastal.inland.permtest,focalm='coastal')
-legend('topleft',legend=c('Coastal Region'),bty='n')
-plot(coastal.inland.permtest,focalm='inland')
-legend('topright',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)),cex=1,bg='white')
-legend('topleft',legend=c('Inland Region'),bty='n')
+
+plot(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
+
+for (i in 1:length(boomBust.coastal$booms))
+{
+  indexCalBP = boomBust.coastal$booms[[i]][[2]]
+  indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
+  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,2],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
+}
+
+for (i in 1:length(boomBust.coastal$busts))
+{
+  indexCalBP = boomBust.coastal$busts[[i]][[2]]
+  indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
+  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,1],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
+}
+polygon(c(coastal.inland.permtest$observed$coastal$calBP,rev(coastal.inland.permtest$observed$coastal$calBP)),c(coastal.inland.permtest$envelope$coastal[,1],rev(coastal.inland.permtest$envelope$coastal[,2])),border=NA,col='lightgrey')
+lines(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,lwd=1.5)
+text(x=6600,y=0.17,label='Coastal SPD')
+text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[1],5)),cex=0.8)
+
+
+
+plot(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
+
+for (i in 1:length(boomBust.coastal$booms))
+{
+  indexCalBP = boomBust.coastal$booms[[i]][[2]]
+  indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
+  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,2],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
+}
+
+for (i in 1:length(boomBust.coastal$busts))
+{
+  indexCalBP = boomBust.coastal$busts[[i]][[2]]
+  indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
+  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,1],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
+}
+polygon(c(coastal.inland.permtest$observed$inland$calBP,rev(coastal.inland.permtest$observed$inland$calBP)),c(coastal.inland.permtest$envelope$inland[,1],rev(coastal.inland.permtest$envelope$inland[,2])),border=NA,col='lightgrey')
+lines(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,lwd=1.5)
+text(x=6600,y=0.17,label='Inland SPD')
+text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[2],5)),cex=0.8)
+legend('topright',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.80,0.36,0.36,0.8),rgb(0.25,0.41,0.88,0.8)),cex=0.8,bty='n')
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
 
 ## Figure 3 ####
 tol=0.01
