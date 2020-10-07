@@ -25,4 +25,4 @@ for (i in 1:nsim)
   
 }
 
-save(prior.check.uncal.coastal,prior.check.uncal.inland,file='../results_images/prior_predictive_check.RData')
+save(prior.check.uncal.coastal,prior.check.uncal.inland,file='../R_image_files/prior_predictive_check.RData')
