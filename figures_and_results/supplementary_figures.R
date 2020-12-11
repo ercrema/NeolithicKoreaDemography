@@ -89,17 +89,17 @@ dev.off()
 
 
 ## Figure S6 - SST Median Time Series ####
-pdf(file = "./figureS6.pdf",width = 8,height = 4)
-par(mfrow=c(2,1),mar=c(3,4,2,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='cal BP',ylab='temperature (deg C)',axes=F,main='a')
+pdf(file = "./figureS6.pdf",width = 8,height = 6)
+par(mfrow=c(2,1),mar=c(1,4,1,1))
+plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='',ylab='temperature (deg C)',axes=F,main='a')
 rect(xleft=med.kim2004.model[80],xright=med.kim2004.model[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
 points(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
 points(med.kim2004.model[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
 text(4949.801,22,TeX('$1050cm \\, (a_{1})$'),cex=0.8)
-text(4700.733,20.3,TeX('$1035cm \\, (a_{2})$'),cex=0.8)
+text(4700.733,20.33,TeX('$1035cm \\, (a_{2})$'),cex=0.8)
 axis(2)
-
+par(mar=c(4,4,1,1))
 plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,1),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
 rect(xleft=med.constantine2020.model[72],xright=med.constantine2020.model[73],ybottom=0,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.constantine2020.model,constantine2020.apt$AP_T_Ratio,type='l',lty=1,col='darkgrey')
