@@ -225,98 +225,49 @@ dev.off()
 
 
 ## Figure 4 ####
-point_a=kim2004.model.marine20$thetaPredict[,81]
-point_b=kim2004.model.marine20$thetaPredict[,80]
-
-a_coast=sample(point_a)-sample(post.coastal$c,size=length(point_a))
-a_coast.hpdi_left=c(HPDinterval(mcmc(a_coast),prob = 0.90)[1],0)
-a_coast.hpdi_right=c(0,HPDinterval(mcmc(a_coast),prob = 0.90)[2])
-a_coast.dens=density(a_coast)
-a_coast.hpdi.left.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi_left[1]&a_coast.dens$x<=a_coast.hpdi_left[2])]
-a_coast.hpdi.left.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi_left[1]&a_coast.dens$x<=a_coast.hpdi_left[2])]
-a_coast.hpdi.right.x = a_coast.dens$x[which(a_coast.dens$x>=a_coast.hpdi_right[1]&a_coast.dens$x<=a_coast.hpdi_right[2])]
-a_coast.hpdi.right.y = a_coast.dens$y[which(a_coast.dens$x>=a_coast.hpdi_right[1]&a_coast.dens$x<=a_coast.hpdi_right[2])]
+# Extract event timing
+point_a1=kim2004.model$thetaPredict[,81]
+point_a2=kim2004.model$thetaPredict[,80]
+point_b1=constantine2020.model$thetaPredict[,73]
+point_b2=constantine2020.model$thetaPredict[,72]
 
 
-b_coast=sample(point_b)-sample(post.coastal$c,size=length(point_a))
-b_coast.hpdi_left=c(HPDinterval(mcmc(b_coast),prob = 0.90)[1],0)
-b_coast.hpdi_right=c(0,HPDinterval(mcmc(b_coast),prob = 0.90)[2])
-b_coast.dens=density(b_coast)
-b_coast.hpdi.left.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi_left[1]&b_coast.dens$x<=b_coast.hpdi_left[2])]
-b_coast.hpdi.left.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi_left[1]&b_coast.dens$x<=b_coast.hpdi_left[2])]
-b_coast.hpdi.right.x = b_coast.dens$x[which(b_coast.dens$x>=b_coast.hpdi_right[1]&b_coast.dens$x<=b_coast.hpdi_right[2])]
-b_coast.hpdi.right.y = b_coast.dens$y[which(b_coast.dens$x>=b_coast.hpdi_right[1]&b_coast.dens$x<=b_coast.hpdi_right[2])]
+changepointPlot = function(x,y,nsample=1000,hpd=0.90,...)
+{
+  diff=sample(x,size=nsample)-sample(y,size=nsample)
+  left = c(HPDinterval(mcmc(diff),prob = hpd)[1],0)
+  right = c(0,HPDinterval(mcmc(diff),prob = hpd)[2])
+  plotRight=plotLeft=TRUE
+  if (any(right<0)){left[2]=right[2];plotRight=FALSE}
+  if (any(left>0)){right[1]=left[1];plotLeft=FALSE}
+    
 
-a_inland=sample(point_a)-sample(post.inland$c,size=length(point_a))
-a_inland.hpdi_left=c(HPDinterval(mcmc(a_inland),prob = 0.90)[1],0)
-a_inland.hpdi_right=c(0,HPDinterval(mcmc(a_inland),prob = 0.90)[2])
-a_inland.dens=density(a_inland)
-a_inland.hpdi.left.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi_left[1]&a_inland.dens$x<=a_inland.hpdi_left[2])]
-a_inland.hpdi.left.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi_left[1]&a_inland.dens$x<=a_inland.hpdi_left[2])]
-a_inland.hpdi.right.x = a_inland.dens$x[which(a_inland.dens$x>=a_inland.hpdi_right[1]&a_inland.dens$x<=a_inland.hpdi_right[2])]
-a_inland.hpdi.right.y = a_inland.dens$y[which(a_inland.dens$x>=a_inland.hpdi_right[1]&a_inland.dens$x<=a_inland.hpdi_right[2])]
+  dens = density(diff)
+  hpdi.left.x = dens$x[which(dens$x>=left[1]&dens$x<=left[2])]
+  hpdi.left.y = dens$y[which(dens$x>=left[1]&dens$x<=left[2])]
+  hpdi.right.x = dens$x[which(dens$x>=right[1]&dens$x<=right[2])]
+  hpdi.right.y = dens$y[which(dens$x>=right[1]&dens$x<=right[2])]
+  
+  plot(dens$x,dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),...)
+  if(plotLeft){polygon(x=c(hpdi.left.x,rev(hpdi.left.x)),y=c(hpdi.left.y,rep(0,length(hpdi.left.y))),border=NA,col='lightblue')}
+  if(plotRight){polygon(x=c(hpdi.right.x,rev(hpdi.right.x)),y=c(hpdi.right.y,rep(0,length(hpdi.right.y))),border=NA,col='lightpink')}
+  lines(dens)
+  abline(v=0,lty=2,lwd=1.5)
+  axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
+  axis(2)
+  box()
+  text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(diff>0)/1000,2)),cex=0.8)
+  text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(diff<0)/1000,2)),cex=0.8)
+}
 
-
-b_inland=sample(point_b)-sample(post.inland$c,size=length(point_a))
-b_inland.hpdi_left=c(HPDinterval(mcmc(b_inland),prob = 0.90)[1],0)
-b_inland.hpdi_right=c(0,HPDinterval(mcmc(b_inland),prob = 0.90)[2])
-b_inland.dens=density(b_inland)
-b_inland.hpdi.left.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi_left[1]&b_inland.dens$x<=b_inland.hpdi_left[2])]
-b_inland.hpdi.left.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi_left[1]&b_inland.dens$x<=b_inland.hpdi_left[2])]
-b_inland.hpdi.right.x = b_inland.dens$x[which(b_inland.dens$x>=b_inland.hpdi_right[1]&b_inland.dens$x<=b_inland.hpdi_right[2])]
-b_inland.hpdi.right.y = b_inland.dens$y[which(b_inland.dens$x>=b_inland.hpdi_right[1]&b_inland.dens$x<=b_inland.hpdi_right[2])]
-
-
-
-pdf(file = "./figure4.pdf",width=3.4,height = 3.4,pointsize=1.5)
-par(mfrow=c(2,2),mar=c(5,4,2,1))
-plot(a_coast.dens$x,a_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event A')
-polygon(x=c(a_coast.hpdi.left.x,rev(a_coast.hpdi.left.x)),y=c(a_coast.hpdi.left.y,rep(0,length(a_coast.hpdi.left.y))),border=NA,col='lightblue')
-polygon(x=c(a_coast.hpdi.right.x,rev(a_coast.hpdi.right.x)),y=c(a_coast.hpdi.right.y,rep(0,length(a_coast.hpdi.right.y))),border=NA,col='lightpink')
-
-polygon(x=c(a_coast.dens$x,rev(a_coast.dens$x)),y=c(a_coast.dens$y,rep(0,length(a_coast.dens$y))),border='lightgrey')
-axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
-axis(2)
-box()
-text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_coast>0)/1000,2)),cex=0.8)
-text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_coast<0)/1000,2)),cex=0.8)
-abline(v=0,lty=2,lwd=1.5)
-
-
-plot(b_coast.dens$x,b_coast.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Coastal Changepoint vs Event B')
-polygon(x=c(b_coast.hpdi.left.x,rev(b_coast.hpdi.left.x)),y=c(b_coast.hpdi.left.y,rep(0,length(b_coast.hpdi.left.y))),border=NA,col='lightblue')
-polygon(x=c(b_coast.hpdi.right.x,rev(b_coast.hpdi.right.x)),y=c(b_coast.hpdi.right.y,rep(0,length(b_coast.hpdi.right.y))),border=NA,col='lightpink')
-
-polygon(x=c(b_coast.dens$x,rev(b_coast.dens$x)),y=c(b_coast.dens$y,rep(0,length(b_coast.dens$y))),border='lightgrey')
-axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
-axis(2)
-box()
-text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_coast>0)/1000,2)),cex=0.8)
-text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_coast<0)/1000,2)),cex=0.8)
-abline(v=0,lty=2,lwd=1.5)
-
-plot(a_inland.dens$x,a_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event A')
-polygon(x=c(a_inland.hpdi.left.x,rev(a_inland.hpdi.left.x)),y=c(a_inland.hpdi.left.y,rep(0,length(a_inland.hpdi.left.y))),border=NA,col='lightblue')
-polygon(x=c(a_inland.hpdi.right.x,rev(a_inland.hpdi.right.x)),y=c(a_inland.hpdi.right.y,rep(0,length(a_inland.hpdi.right.y))),border=NA,col='lightpink')
-
-
-polygon(x=c(a_inland.dens$x,rev(a_inland.dens$x)),y=c(a_inland.dens$y,rep(0,length(a_inland.dens$y))),border='lightgrey')
-axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
-axis(2)
-box()
-text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(a_inland>0)/1000,2)),cex=0.8)
-text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(a_inland<0)/1000,2)),cex=0.8)
-abline(v=0,lty=2,lwd=1.5)
-
-
-plot(b_inland.dens$x,b_inland.dens$y,type='n',xlab='Years',ylab='Probability Density',axes=FALSE,xlim=c(-1000,1000),main='Inland Changepoint vs Event B')
-polygon(x=c(b_inland.hpdi.left.x,rev(b_inland.hpdi.left.x)),y=c(b_inland.hpdi.left.y,rep(0,length(b_inland.hpdi.left.y))),border=NA,col='lightblue')
-polygon(x=c(b_inland.hpdi.right.x,rev(b_inland.hpdi.right.x)),y=c(b_inland.hpdi.right.y,rep(0,length(b_inland.hpdi.right.y))),border=NA,col='lightpink')
-polygon(x=c(b_inland.dens$x,rev(b_inland.dens$x)),y=c(b_inland.dens$y,rep(0,length(b_inland.dens$y))),border='lightgrey')
-axis(1,at=seq(-1000,1000,200),labels=abs(seq(-1000,1000,200)))
-axis(2)
-box()
-text(x=500,y=median(par('usr')[3:4]),label=paste('Changepoint after\n P=',round(sum(b_inland>0)/1000,2)),cex=0.8)
-text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(b_inland<0)/1000,2)),cex=0.8)
-abline(v=0,lty=2,lwd=1.5)
+pdf(file = "./figure4.pdf",width = 6,height = 10)
+par(mfrow=c(4,2),mar=c(4,4,2,1))
+changepointPlot(point_a1,post.coastal$c,nsample=1000,main=TeX('$a_{1}-c_{coastal}$'))
+changepointPlot(point_a2,post.coastal$c,nsample=1000,main=TeX('$a_{2}-c_{coastal}$'))
+changepointPlot(point_b1,post.coastal$c,nsample=1000,main=TeX('$b_{1}-c_{coastal}$'))
+changepointPlot(point_b2,post.coastal$c,nsample=1000,main=TeX('$b_{2}-c_{coastal}$'))
+changepointPlot(point_a1,post.inland$c,nsample=1000,main=TeX('$a_{1}-c_{inland}$'))
+changepointPlot(point_a2,post.inland$c,nsample=1000,main=TeX('$a_{2}-c_{inland}$'))
+changepointPlot(point_b1,post.inland$c,nsample=1000,main=TeX('$b_{1}-c_{inland}$'))
+changepointPlot(point_b2,post.inland$c,nsample=1000,main=TeX('$b_{2}-c_{inland}$'))
 dev.off()
