@@ -67,6 +67,6 @@ while(outlierPresence)
 med.kim2004.model= apply(kim2004.model$thetaPredict,2,median)
 med.constantine2020.model= apply(constantine2020.model$thetaPredict,2,median)
 
-save(med.kim2004.model,med.constantine2020.model,kim2004.model,constantine2020.model,kim2004.dates,kim2004.temp,constantine2020.dates,constantine2020.apt,file='../R_image_files/kim2004_agedepthmodel.RData')
+save(med.kim2004.model,med.constantine2020.model,kim2004.model,constantine2020.model,kim2004.dates,kim2004.temp,constantine2020.dates,constantine2020.apt,file='../R_image_files/agedepthmodels.RData')
 
 
