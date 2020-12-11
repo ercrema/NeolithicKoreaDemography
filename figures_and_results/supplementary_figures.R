@@ -10,7 +10,7 @@ library(latex2exp)
 # Load Results & Data
 load('../R_image_files/koreanC14.RData')
 load('../R_image_files/spd_test_results.RData')
-load('../R_image_files/kim2004_agedepthmodel.RData')
+load('../R_image_files/agedepthmodels.RData')
 load('../R_image_files/resABC_laplace_general.RData')
 load('../R_image_files/resABC_laplace_coastal.RData')
 load('../R_image_files/resABC_laplace_inland.RData')
@@ -90,58 +90,57 @@ dev.off()
 
 ## Figure S6 - SST Median Time Series ####
 pdf(file = "./figureS6.pdf",width = 8,height = 4)
-plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='cal BP',ylab='temperature (deg C)',axes=F)
-rect(xleft=med.bchron.marine20[80],xright=med.bchron.marine20[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
-lines(med.bchron.marine20,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
-points(med.bchron.marine20,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
-points(med.bchron.marine20[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
-text(4949.801,22,'1050cm (point a)',cex=0.8)
-text(4700.733,20.33,'1035cm (point b)',cex=0.8)
+par(mfrow=c(2,1),mar=c(3,4,2,1))
+plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='cal BP',ylab='temperature (deg C)',axes=F,main='a')
+rect(xleft=med.kim2004.model[80],xright=med.kim2004.model[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
+lines(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
+points(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
+points(med.kim2004.model[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
+text(4949.801,22,TeX('$1050cm \\, (a_{1})$'),cex=0.8)
+text(4700.733,20.3,TeX('$1035cm \\, (a_{2})$'),cex=0.8)
+axis(2)
+
+plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,1),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
+rect(xleft=med.constantine2020.model[72],xright=med.constantine2020.model[73],ybottom=0,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
+lines(med.constantine2020.model,constantine2020.apt$AP_T_Ratio,type='l',lty=1,col='darkgrey')
+points(med.constantine2020.model,constantine2020.apt$AP_T_Ratio,pch=20,col='darkgrey')
+points(med.constantine2020.model[72:73],constantine2020.apt$AP_T_Ratio[72:73],pch=20,col=1,cex=1.2)
+text(4348.611,0.95,TeX('$1020cm \\, (b_{1})$'),cex=0.8)
+text(4262,0.76,TeX('$1017cm \\, (b_{2})$'),cex=0.8)
 axis(1,at=seq(7000,3000,-1000))
 axis(1,at=seq(7000,3000,-500),labels=NA)
 axis(1,at=seq(7000,3000,-100),tck=-0.01,labels=NA)
 axis(2)
+
 dev.off()
-## FIgure S7 - Posterior Events A & B ####
-pdf(file = "./figureS7.pdf",width = 7,height = 4)
+## FIgure S7 - Posterior Events  ####
+pdf(file = "./figureS7.pdf",width = 7,height = 7)
+
+plotEventPosterior = function(x,hpd,legloc='topright',legsize=1,...)
+{
+  hpdi.interval=HPDinterval(mcmc(x),prob = hpd)
+  d.event=density(x)
+  
+  plot(d.event$x,d.event$y,type='n',xlab='cal BP',ylab='Probability Density',...)
+  hpdi.x = d.event$x[which(d.event$x>=hpdi.interval[1]&d.event$x<=hpdi.interval[2])]
+  hpdi.y = d.event$y[which(d.event$x>=hpdi.interval[1]&d.event$x<=hpdi.interval[2])]
+  polygon(x=c(hpdi.x,rev(hpdi.x)),y=c(hpdi.y,rep(0,length(hpdi.y))),border=NA,col='lightblue')
+  lines(d.event)
+  abline(v=median(x),lty=2)
+  legend(legloc,legend=c(paste0(hpd*100,'%HPDI:\n',paste(rev(hpdi.interval),collapse='-'),' cal BP')),bty='n',cex=legsize)
+}
 
 # Extract Posteriors
-point_a=kim2004.model.marine20$thetaPredict[,81]
-point_b=kim2004.model.marine20$thetaPredict[,80]
+point_a1=kim2004.model$thetaPredict[,81]
+point_a2=kim2004.model$thetaPredict[,80]
+point_b1=constantine2020.model$thetaPredict[,73]
+point_b2=constantine2020.model$thetaPredict[,72]
 
-# Compute 90% HPD
-dcool.hpdi.a=HPDinterval(mcmc(point_a),prob = 0.90)
-dcool.hpdi.b=HPDinterval(mcmc(point_b),prob = 0.90)
-
-# Compute KDE
-d.event.a=density(point_a)
-d.event.b=density(point_b)
-
-# Plot
-par(mfrow=c(1,2))
-plot(d.event.a$x,d.event.a$y,type='n',xlab='cal BP',ylab='Probability Density',axes=FALSE,xlim=c(5500,4000))
-legend('topright',legend=c('Timing of Point A',paste0('90%HPDI:\n',paste(rev(dcool.hpdi.a),collapse='-'),' cal BP')),bty='n',cex=0.7)
-axis(1)
-axis(1,at=seq(7000,3000,-100),tck=-0.03,labels=NA)
-
-axis(2)
-hpdi.x = d.event.a$x[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
-hpdi.y = d.event.a$y[which(d.event.a$x>=dcool.hpdi.a[1]&d.event.a$x<=dcool.hpdi.a[2])]
-polygon(x=c(hpdi.x,rev(hpdi.x)),y=c(hpdi.y,rep(0,length(hpdi.y))),border=NA,col='lightblue')
-polygon(x=c(d.event.a$x,rev(d.event.a$x)),y=c(d.event.a$y,rep(0,length(d.event.a$y))))
-abline(v=median(point_a),lty=2)
-
-plot(d.event.b$x,d.event.b$y,type='n',xlab='cal BP', ylab='Probability Density',axes=FALSE,xlim=c(5500,4000))
-legend('topright', legend=c('Timing of Point B', paste0('90%HPDI:\n',paste(rev(dcool.hpdi.b),collapse='-'),' cal BP')), bty='n',cex=0.7)
-axis(1)
-axis(2)
-axis(1,at=seq(7000,3000,-100),tck=-0.03,labels=NA)
-
-hpdi.x = d.event.b$x[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
-hpdi.y = d.event.b$y[which(d.event.b$x>=dcool.hpdi.b[1]&d.event.b$x<=dcool.hpdi.b[2])]
-polygon(x=c(hpdi.x,rev(hpdi.x)),y=c(hpdi.y,rep(0,length(hpdi.y))),border=NA,col='lightblue')
-polygon(x=c(d.event.b$x,rev(d.event.b$x)),y=c(d.event.b$y,rep(0,length(d.event.b$y))))
-abline(v=median(point_b),lty=2)
+par(mfrow=c(2,2))
+plotEventPosterior(x=point_a1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{1}$'),legsize = 0.8)
+plotEventPosterior(x=point_a2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{2}$'),legsize = 0.8)
+plotEventPosterior(x=point_b1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{1}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_b2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{2}$'),legloc = 'topleft',legsize = 0.8)
 dev.off()
 
 
@@ -411,15 +410,6 @@ c_plot(d.c.inland.cal,c.hpdi.inland.cal,median(post.inland.cal$c))
 title(TeX('$c$ Posterior Inland'))
 legend('topright',legend=c('90% HPDI Interval',paste(rev(round(c.hpdi.inland.cal)),collapse='-')),bty='n',cex=leg.cex)
 dev.off()
-
-
-
-
-
-
-
-
-
 
 
 
