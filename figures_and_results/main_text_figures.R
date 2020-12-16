@@ -10,7 +10,7 @@ library(latex2exp)
 # Load Results & Data
 load('../R_image_files/koreanC14.RData')
 load('../R_image_files/spd_test_results.RData')
-load('../R_image_files/kim2004_agedepthmodel.RData')
+load('../R_image_files/agedepthmodels.RData')
 load('../R_image_files/resABC_laplace_general.RData')
 load('../R_image_files/resABC_laplace_coastal.RData')
 load('../R_image_files/resABC_laplace_inland.RData')
@@ -226,10 +226,13 @@ dev.off()
 
 ## Figure 4 ####
 # Extract event timing
-point_a1=kim2004.model$thetaPredict[,81]
-point_a2=kim2004.model$thetaPredict[,80]
-point_b1=constantine2020.model$thetaPredict[,73]
-point_b2=constantine2020.model$thetaPredict[,72]
+point_a1=SSDP102.model$thetaPredict[,81]
+point_a2=SSDP102.model$thetaPredict[,80]
+point_b1=pomaeho.model$thetaPredict[,73]
+point_b2=pomaeho.model$thetaPredict[,72]
+point_c1=gy.model$thetaPredict[,79]
+point_c2=gy.model$thetaPredict[,78]
+
 
 
 changepointPlot = function(x,y,nsample=1000,hpd=0.90,...)
@@ -260,14 +263,18 @@ changepointPlot = function(x,y,nsample=1000,hpd=0.90,...)
   text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(diff<0)/1000,2)),cex=0.8)
 }
 
-pdf(file = "./figure4.pdf",width = 6,height = 10)
-par(mfrow=c(4,2),mar=c(4,4,2,1))
+pdf(file = "./figure4.pdf",width = 9,height = 8)
+par(mfrow=c(3,4),mar=c(4,4,2,1))
 changepointPlot(point_a1,post.coastal$c,nsample=1000,main=TeX('$a_{1}-c_{coastal}$'))
 changepointPlot(point_a2,post.coastal$c,nsample=1000,main=TeX('$a_{2}-c_{coastal}$'))
 changepointPlot(point_b1,post.coastal$c,nsample=1000,main=TeX('$b_{1}-c_{coastal}$'))
 changepointPlot(point_b2,post.coastal$c,nsample=1000,main=TeX('$b_{2}-c_{coastal}$'))
+changepointPlot(point_c1,post.coastal$c,nsample=1000,main=TeX('$c_{1}-c_{coastal}$'))
+changepointPlot(point_c2,post.coastal$c,nsample=1000,main=TeX('$c_{2}-c_{coastal}$'))
 changepointPlot(point_a1,post.inland$c,nsample=1000,main=TeX('$a_{1}-c_{inland}$'))
 changepointPlot(point_a2,post.inland$c,nsample=1000,main=TeX('$a_{2}-c_{inland}$'))
 changepointPlot(point_b1,post.inland$c,nsample=1000,main=TeX('$b_{1}-c_{inland}$'))
 changepointPlot(point_b2,post.inland$c,nsample=1000,main=TeX('$b_{2}-c_{inland}$'))
+changepointPlot(point_c1,post.inland$c,nsample=1000,main=TeX('$c_{1}-c_{inland}$'))
+changepointPlot(point_c2,post.inland$c,nsample=1000,main=TeX('$c_{2}-c_{inland}$'))
 dev.off()
