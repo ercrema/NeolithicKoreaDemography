@@ -82,39 +82,44 @@ plot(millet.permtest,focalm='yes')
 legend('topright',bty='n', legend=c('Millet SPD','Null SPD','Positive Deviation','Negative Deviation'), lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)), cex=0.8,bg='white')
 legend('topleft',legend=paste0('Global P-value=',round(millet.permtest$pValueList[1],5)),bty='n')
 dev.off()
-## Figure S5 - Age Depth Model ####
-pdf(file = "./figureS5.pdf",width = 4,height = 5)
-plot(kim2004.model.marine20)
-dev.off()
 
 
-## Figure S6 - SST Median Time Series ####
-pdf(file = "./figureS6.pdf",width = 8,height = 6)
-par(mfrow=c(2,1),mar=c(1,4,1,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(range(kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='',ylab='temperature (deg C)',axes=F,main='a')
-rect(xleft=med.kim2004.model[80],xright=med.kim2004.model[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
-lines(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
-points(med.kim2004.model,kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
-points(med.kim2004.model[80:81],kim2004.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
+## Figure S5 - SST Median Time Series ####
+pdf(file = "./figureS5.pdf",width = 8,height = 8)
+par(mfrow=c(3,1),mar=c(2.5,4,1,1))
+plot(0,xlim=c(7000,3000),type='n',ylim=c(range(SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='',ylab='temperature (deg C)',axes=F,main='a')
+rect(xleft=med.SSDP102.model[80],xright=med.SSDP102.model[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
+lines(med.SSDP102.model,SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
+points(med.SSDP102.model,SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
+points(med.SSDP102.model[80:81],SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37[80:81],pch=20,col=1,cex=1.2)
 text(4949.801,22,TeX('$1050cm \\, (a_{1})$'),cex=0.8)
 text(4700.733,20.33,TeX('$1035cm \\, (a_{2})$'),cex=0.8)
 axis(2)
-par(mar=c(4,4,1,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,1),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
-rect(xleft=med.constantine2020.model[72],xright=med.constantine2020.model[73],ybottom=0,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
-lines(med.constantine2020.model,constantine2020.apt$AP_T_Ratio,type='l',lty=1,col='darkgrey')
-points(med.constantine2020.model,constantine2020.apt$AP_T_Ratio,pch=20,col='darkgrey')
-points(med.constantine2020.model[72:73],constantine2020.apt$AP_T_Ratio[72:73],pch=20,col=1,cex=1.2)
+par(mar=c(2.5,4,1,1))
+plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
+rect(xleft=med.pomaeho.model[72],xright=med.pomaeho.model[73],ybottom=0,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
+lines(med.pomaeho.model,pomaeho.apt$AP_T_Ratio,type='l',lty=1,col='darkgrey')
+points(med.pomaeho.model,pomaeho.apt$AP_T_Ratio,pch=20,col='darkgrey')
+points(med.pomaeho.model[72:73],pomaeho.apt$AP_T_Ratio[72:73],pch=20,col=1,cex=1.2)
 text(4348.611,0.95,TeX('$1020cm \\, (b_{1})$'),cex=0.8)
 text(4262,0.76,TeX('$1017cm \\, (b_{2})$'),cex=0.8)
-axis(1,at=seq(7000,3000,-1000))
-axis(1,at=seq(7000,3000,-500),labels=NA)
-axis(1,at=seq(7000,3000,-100),tck=-0.01,labels=NA)
 axis(2)
-
+par(mar=c(2.5,4,1,1))
+plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
+rect(xleft=med.gy.model[78],xright=med.gy.model[79],ybottom=0.76,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
+lines(med.gy.model,gy.apt$AP_TP_Ratio,type='l',lty=1,col='darkgrey')
+points(med.gy.model,gy.apt$AP_TP_Ratio,pch=20,col='darkgrey')
+points(med.gy.model[78:79],gy.apt$AP_TP_Ratio[78:79],pch=20,col=1,cex=1.2)
+text(4698,0.9,TeX('$890cm \\, (c_{1})$'),cex=0.8)
+text(4500,0.82,TeX('$887cm \\, (c_{2})$'),cex=0.8)
+axis(2)
+axis(1,at=seq(7000,3000,-1000),line=-1)
+axis(1,at=seq(7000,3000,-500),labels=NA,line=-1)
+axis(1,at=seq(7000,3000,-100),tck=-0.01,labels=NA,line=-1)
+mtext('Cal BP',side=1,line=1.5,cex=0.8)
 dev.off()
-## FIgure S7 - Posterior Events  ####
-pdf(file = "./figureS7.pdf",width = 7,height = 7)
+## FIgure S6 - Posterior Events  ####
+pdf(file = "./figureS6.pdf",width = 7,height = 10)
 
 plotEventPosterior = function(x,hpd,legloc='topright',legsize=1,...)
 {
@@ -131,21 +136,25 @@ plotEventPosterior = function(x,hpd,legloc='topright',legsize=1,...)
 }
 
 # Extract Posteriors
-point_a1=kim2004.model$thetaPredict[,81]
-point_a2=kim2004.model$thetaPredict[,80]
-point_b1=constantine2020.model$thetaPredict[,73]
-point_b2=constantine2020.model$thetaPredict[,72]
+point_a1=SSDP102.model$thetaPredict[,81]
+point_a2=SSDP102.model$thetaPredict[,80]
+point_b1=pomaeho.model$thetaPredict[,73]
+point_b2=pomaeho.model$thetaPredict[,72]
+point_c1=gy.model$thetaPredict[,79]
+point_c2=gy.model$thetaPredict[,78]
 
-par(mfrow=c(2,2))
+par(mfrow=c(3,2))
 plotEventPosterior(x=point_a1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{1}$'),legsize = 0.8)
 plotEventPosterior(x=point_a2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{2}$'),legsize = 0.8)
 plotEventPosterior(x=point_b1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{1}$'),legloc = 'topleft',legsize = 0.8)
 plotEventPosterior(x=point_b2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{2}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_c1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, c_{1}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_c2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, c_{2}$'),legloc = 'topleft',legsize = 0.8)
 dev.off()
 
 
-## Figure S8 - ABC Concept ####
-pdf(file = "./figureS8.pdf",width = 7,height = 10)
+## Figure S7 - ABC Concept ####
+pdf(file = "./figureS7.pdf",width = 7,height = 10)
 layout(mat=matrix(c(1,4,5,6,2,4,5,6,3,4,5,6),nrow=4,ncol=3),widths = c(0.3,0.3,0.3))
 
 par(mar=c(5,4,2,1))
@@ -233,7 +242,7 @@ title('f')
 legend('topleft',legend=c('Candidate SPD','Target SPD'),lty=c(1,2),col=c(1,2))
 dev.off()
 
-## Figure S9 - Prior Predictive Check ####
+## Figure S8 - Prior Predictive Check ####
 load('../R_image_files/koreanC14.RData')
 
 koreaC14.inland = subset(koreaC14,region=='inland')
@@ -252,7 +261,7 @@ thinindex.general = thinDates(koreaC14$c14age,koreaC14$c14error,bins=bins,size=1
 target.spd.general = spd(caldates[thinindex.general],timeRange = c(7000,3000),datenormalised=TRUE,spdnormalised = TRUE,verbose=FALSE)
 
 
-pdf(file = "./figureS9.pdf",width = 4,height = 7)
+pdf(file = "./figureS8.pdf",width = 4,height = 7)
 par(mfrow=c(2,1))
 plot(0,0,type='n',xlim=c(7000,3000),ylim=c(0,max(prior.check.uncal.coastal)),xlab='Cal BP',ylab='Summed Probability')
 apply(prior.check.uncal.coastal,2,lines,x=c(7000:3000),col=rgb(0,0,0,0.05))
@@ -342,7 +351,7 @@ c_plot = function(d,hpdi,med)
   abline(v=med,lty=2)
 }
 
-pdf(file = "./figureS10.pdf",width = 8,height = 8)
+pdf(file = "./figureS9.pdf",width = 8,height = 8)
 par(mfrow=c(3,3))
 leg.cex=0.85
 r1_r2_plot(d.r1.general.uncal,r1.hpdi.general.uncal,median(post.general.uncal$bl))
@@ -377,7 +386,7 @@ legend('topright',legend=c('90% HPDI Interval',paste(rev(round(c.hpdi.inland.unc
 dev.off()
 
 
-pdf(file = "./figureS11.pdf",width = 8,height = 8)
+pdf(file = "./figureS10.pdf",width = 8,height = 8)
 par(mfrow=c(3,3))
 leg.cex=0.85
 r1_r2_plot(d.r1.general.cal,r1.hpdi.general.cal,median(post.general.cal$bl))
@@ -414,7 +423,7 @@ dev.off()
 
 
 
-## Figure S12 - Posterior Predictive Checks ####
+## Figure S11 - Posterior Predictive Checks ####
 
 ppmedian.general=apply(ppcheck.uncal.general,1,median)
 pplo.general=apply(ppcheck.uncal.general,1,quantile,0.025)
@@ -428,7 +437,7 @@ ppmedian.inland=apply(ppcheck.uncal.inland,1,median)
 pplo.inland=apply(ppcheck.uncal.inland,1,quantile,0.025)
 pphi.inland=apply(ppcheck.uncal.inland,1,quantile,0.975)
 
-pdf(file = "./figureS12.pdf",width = 10,height = 3.5)
+pdf(file = "./figureS11.pdf",width = 10,height = 3.5)
 par(mfrow=c(1,3))
 plot(target.spd.general$grid$calBP,target.spd.general$grid$PrDens,type='n',xlim=c(7000,3000),ylim=c(0,max(c(target.spd.general$grid$PrDens,pphi.general))),xlab='cal BP',ylab='Summed Probability')
 polygon(c(7000:3000,rev(7000:3000)),c(pplo.general,rev(pphi.general)),border=NA,col='lightgrey')
