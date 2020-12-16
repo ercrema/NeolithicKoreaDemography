@@ -263,7 +263,7 @@ changepointPlot = function(x,y,nsample=1000,hpd=0.90,...)
   text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(diff<0)/1000,2)),cex=0.8)
 }
 
-pdf(file = "./figure4.pdf",width = 9,height = 8)
+pdf(file = "./figure4.pdf",width = 10,height = 8)
 par(mfrow=c(3,4),mar=c(4,4,2,1))
 changepointPlot(point_a1,post.coastal$c,nsample=1000,main=TeX('$a_{1}-c_{coastal}$'))
 changepointPlot(point_a2,post.coastal$c,nsample=1000,main=TeX('$a_{2}-c_{coastal}$'))
