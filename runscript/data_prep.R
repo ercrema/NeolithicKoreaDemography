@@ -6,6 +6,7 @@ library(maptools)
 library(rgdal)
 library(rgeos)
 library(raster)
+library(here)
 
 ### General Settings ###
 coastalThreshold = 2000 #in m
@@ -13,10 +14,10 @@ clusteringThreshold = 1 #in km
 temporalBinSize = 100 #in years
 
 ### Read 14C Data ####
-koreaC14<-read.csv("../data/Neolithic_C14_dates_cleaned.csv")
+koreaC14<-read.csv(here('data','Neolithic_C14_dates_cleaned.csv'))
 
 ### Read Coastal Data
-koreanPeninsulaCoast = shapefile("../data/shp/polyline_korea.shp") 
+koreanPeninsulaCoast = shapefile(here('data','shp','polyline_korea.shp'))
 koreanPeninsulaCoast = gLineMerge(koreanPeninsulaCoast)
 
 #### Use DBSCAN to Clusters site in proximity #### 
@@ -81,5 +82,5 @@ caldates <- calibrate(koreaC14$c14age,koreaC14$c14error)
 bins=binPrep(ages=caldates,h=temporalBinSize,sites=koreaC14$cluster_id)
 
 #### Store in R image ####
-save(caldates,bins,koreaC14,file='../R_image_files/koreanC14.RData')
+save(caldates,bins,koreaC14,file=here('R_image_files','koreanC14.RData'))
 

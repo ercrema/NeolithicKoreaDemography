@@ -1,8 +1,9 @@
 ### Load Required R Packages
 library(dplyr)
+library(here)
 
 ### Read 14C Data ###
-koreaC14<-read.csv("../data/Neolithic_C14_dates.csv",stringsAsFactors = FALSE)
+koreaC14<-read.csv(here('data','Neolithic_C14_dates.csv'),stringsAsFactors = FALSE)
 
 ### Clean Data ###
 koreaC14 <- koreaC14 %>%mutate(milletAsso= case_when(
@@ -70,4 +71,6 @@ for (i in 1:nrow(koreaC14))
 # Remove Dates without Lat/Long
 koreaC14 <- subset(koreaC14,!is.na(latitude)&!is.na(longitude))
 
-write.csv(koreaC14,file="../data/Neolithic_C14_dates_cleaned.csv",row.names=F, fileEncoding="UTF-8")
+write.csv(koreaC14,file=here('data','Neolithic_C14_dates_cleaned.csv'),row.names=F, fileEncoding="UTF-8")
+
+          
