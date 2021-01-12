@@ -49,6 +49,8 @@ initsFunction = function() list(r1=rnorm(1,sd=0.0004),r2=rnorm(1,sd=0.0004),chp=
 # Run MCMC
 mcmc.samples.inland<- nimbleMCMC(code = model,constants = constants,data = data,niter = 100000, nchains = 3, thin=6, nburnin = 10000, summary = FALSE, monitors=c('r1','r2','chp'),WAIC=FALSE,samplesAsCodaMCMC=TRUE,inits=initsFunction,setSeed=c(1,2,3))
 
+gelman.diag(mcmc.samples.inland)$psrf[1:3,]
+
 # Store output
 save(mcmc.samples.inland,file=here('R_image_files','mcmc_samples_inland.RData'))
 
