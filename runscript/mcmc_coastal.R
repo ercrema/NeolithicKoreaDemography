@@ -1,6 +1,7 @@
 ### Load Required R packages ####
 library(nimbleCarbon)
 library(here)
+library(coda)
 library(truncnorm)
 
 ### Load and Pre-Process Observed Data ####

@@ -2,6 +2,7 @@
 library(nimbleCarbon)
 library(here)
 library(truncnorm)
+library(coda)
 
 ### Load and Pre-Process Observed Data ####
 load(here('R_image_files','koreanC14.RData'))
