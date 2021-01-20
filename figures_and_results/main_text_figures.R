@@ -130,8 +130,8 @@ coastal.col="#66C2A5"
 inland.col="#FC8D62"
 
 options(scipen = 9999)
-pdf(file = here('figures_and_results','figure3.pdf'),width = 3.4,height = 8)
-par(mfrow=c(3,1))
+pdf(file = here('figures_and_results','figure3.pdf'),width = 7.5,height = 3)
+par(mfrow=c(1,3),mar=c(5,4,3,0.5))
 
 #bl
 r1.hpdi.coastal=HPDinterval(mcmc(params.coastal$r1),prob = 0.90)
@@ -158,7 +158,6 @@ polygon(x=c(d.r1.inland$x,rev(d.r1.inland$x)),y=c(d.r1.inland$y,rep(0,length(d.r
 
 abline(v=median(params.coastal$r1),lty=2,col=coastal.col)
 abline(v=median(params.inland$r1),lty=2,col=inland.col)
-legend('topright',legend=c('Coastal','Inland'),fill=c(coastal.col,inland.col))
 
 
 #br
@@ -217,6 +216,7 @@ polygon(x=c(d.c.inland$x,rev(d.c.inland$x)),y=c(d.c.inland$y,rep(0,length(d.c.in
 
 abline(v=median(params.coastal$mu),lty=2,col=coastal.col)
 abline(v=median(params.inland$mu),lty=2,col=inland.col)
+legend('topright',legend=c('Coastal','Inland'),fill=c(coastal.col,inland.col),bty='n')
 dev.off()
 
 
