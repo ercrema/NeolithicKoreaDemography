@@ -222,12 +222,12 @@ dev.off()
 
 ## Figure 4 ####
 # Extract event timing
-point_a1=SSDP102.model$thetaPredict[,81]
-point_a2=SSDP102.model$thetaPredict[,80]
-point_b1=pomaeho.model$thetaPredict[,73]
-point_b2=pomaeho.model$thetaPredict[,72]
-point_c1=gy.model$thetaPredict[,79]
-point_c2=gy.model$thetaPredict[,78]
+point_d1=SSDP102.model$thetaPredict[,81]
+point_d2=SSDP102.model$thetaPredict[,80]
+point_f1=pomaeho.model$thetaPredict[,73]
+point_f2=pomaeho.model$thetaPredict[,72]
+point_g1=gy.model$thetaPredict[,79]
+point_g2=gy.model$thetaPredict[,78]
 
 
 
@@ -261,16 +261,16 @@ changepointPlot = function(x,y,nsample=5000,hpd=0.90,...)
 
 pdf(file =here('figures_and_results','figure4.pdf'),width = 10,height = 8)
 par(mfrow=c(3,4),mar=c(4,4,2,1))
-changepointPlot(point_a1,params.coastal$mu,nsample=5000,main=TeX('$a_{1}-c_{coastal}$'))
-changepointPlot(point_a2,params.coastal$mu,nsample=5000,main=TeX('$a_{2}-c_{coastal}$'))
-changepointPlot(point_b1,params.coastal$mu,nsample=5000,main=TeX('$b_{1}-c_{coastal}$'))
-changepointPlot(point_b2,params.coastal$mu,nsample=5000,main=TeX('$b_{2}-c_{coastal}$'))
-changepointPlot(point_c1,params.coastal$mu,nsample=5000,main=TeX('$c_{1}-c_{coastal}$'))
-changepointPlot(point_c2,params.coastal$mu,nsample=5000,main=TeX('$c_{2}-c_{coastal}$'))
-changepointPlot(point_a1,params.inland$mu,nsample=5000,main=TeX('$a_{1}-c_{inland}$'))
-changepointPlot(point_a2,params.inland$mu,nsample=5000,main=TeX('$a_{2}-c_{inland}$'))
-changepointPlot(point_b1,params.inland$mu,nsample=5000,main=TeX('$b_{1}-c_{inland}$'))
-changepointPlot(point_b2,params.inland$mu,nsample=5000,main=TeX('$b_{2}-c_{inland}$'))
-changepointPlot(point_c1,params.inland$mu,nsample=5000,main=TeX('$c_{1}-c_{inland}$'))
-changepointPlot(point_c2,params.inland$mu,nsample=5000,main=TeX('$c_{2}-c_{inland}$'))
+changepointPlot(point_d1,params.coastal$mu,nsample=5000,main=TeX('$d_{1}-c_{coastal}$'))
+changepointPlot(point_d2,params.coastal$mu,nsample=5000,main=TeX('$d_{2}-c_{coastal}$'))
+changepointPlot(point_f1,params.coastal$mu,nsample=5000,main=TeX('$f_{1}-c_{coastal}$'))
+changepointPlot(point_f2,params.coastal$mu,nsample=5000,main=TeX('$f_{2}-c_{coastal}$'))
+changepointPlot(point_g1,params.coastal$mu,nsample=5000,main=TeX('$g_{1}-c_{coastal}$'))
+changepointPlot(point_g2,params.coastal$mu,nsample=5000,main=TeX('$g_{2}-c_{coastal}$'))
+changepointPlot(point_d1,params.inland$mu,nsample=5000,main=TeX('$d_{1}-c_{inland}$'))
+changepointPlot(point_d2,params.inland$mu,nsample=5000,main=TeX('$d_{2}-c_{inland}$'))
+changepointPlot(point_f1,params.inland$mu,nsample=5000,main=TeX('$f_{1}-c_{inland}$'))
+changepointPlot(point_f2,params.inland$mu,nsample=5000,main=TeX('$f_{2}-c_{inland}$'))
+changepointPlot(point_g1,params.inland$mu,nsample=5000,main=TeX('$g_{1}-c_{inland}$'))
+changepointPlot(point_g2,params.inland$mu,nsample=5000,main=TeX('$g_{2}-c_{inland}$'))
 dev.off()
