@@ -213,5 +213,6 @@ par(mfrow=c(3,1),mar=c(5,4,2,0.5))
 plot(params.coastal.uncalsample,interval = 0.95,main='Coastal')
 plot(params.inland.uncalsample,interval = 0.95,main='Inland')
 plot(params.all.uncalsample,interval = 0.95,main='All')
+legend('topleft',)
 dev.off()
 
