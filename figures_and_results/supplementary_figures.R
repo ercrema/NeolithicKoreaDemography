@@ -122,12 +122,12 @@ point_c1=gy.model$thetaPredict[,79]
 point_c2=gy.model$thetaPredict[,78]
 
 par(mfrow=c(3,2))
-plotEventPosterior(x=point_a1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{1}$'),legsize = 0.8)
-plotEventPosterior(x=point_a2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, a_{2}$'),legsize = 0.8)
-plotEventPosterior(x=point_b1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{1}$'),legloc = 'topleft',legsize = 0.8)
-plotEventPosterior(x=point_b2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, b_{2}$'),legloc = 'topleft',legsize = 0.8)
-plotEventPosterior(x=point_c1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, c_{1}$'),legloc = 'topleft',legsize = 0.8)
-plotEventPosterior(x=point_c2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, c_{2}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_a1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, d_{1}$'),legsize = 0.8)
+plotEventPosterior(x=point_a2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, d_{2}$'),legsize = 0.8)
+plotEventPosterior(x=point_b1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, f_{1}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_b2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, f_{2}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_c1,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, g_{1}$'),legloc = 'topleft',legsize = 0.8)
+plotEventPosterior(x=point_c2,hpd=0.90,xlim=c(5500,3500),main=TeX('$Event \\, g_{2}$'),legloc = 'topleft',legsize = 0.8)
 dev.off()
 
 
