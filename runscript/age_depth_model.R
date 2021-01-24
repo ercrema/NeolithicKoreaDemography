@@ -2,17 +2,16 @@
 library(Bchron)
 library(readxl)
 library(dplyr)
-
+library(here)
 ## Setup ####
 
 # Read Data
-SSDP102.dates = read.csv('../data/Kim_etal_2004/SSDP102_Kim_etlal_2004_c14.csv',skip=1)
-SSDP102.temp  = read.csv('../data/Kim_etal_2004/SSDP102_Kim_etlal_2004_temp.csv',skip=1)
-pomaeho.dates = read.csv('../data/Constantine_etal_2020/pomaeho_constantine_etal_2020_c14.csv')
-pomaeho.apt = read.csv('../data/Constantine_etal_2020/pomaeho_constantine_etal_2020_aptp.csv')
-gy.dates = read.csv('../data/Park_etal_2019/GY_Park_etal_2019_c14.csv')
-gy.apt = read.csv('../data/Park_etal_2019/GY_Park_etal_2019_aptp.csv')
-
+SSDP102.dates = read.csv(here('data','Kim_etal_2004','SSDP102_Kim_etlal_2004_c14.csv'),skip=1)
+SSDP102.temp  = read.csv(here('data','Kim_etal_2004','SSDP102_Kim_etlal_2004_temp.csv'),skip=1)
+pomaeho.dates = read.csv(here('data','Constantine_etal_2020','pomaeho_constantine_etal_2020_c14.csv'))
+pomaeho.apt = read.csv(here('data','Constantine_etal_2020','pomaeho_constantine_etal_2020_aptp.csv'))
+gy.dates = read.csv(here('data','Park_etal_2019','GY_Park_etal_2019_c14.csv'))
+gy.apt = read.csv(here('data','Park_etal_2019','GY_Park_etal_2019_aptp.csv'))
 ## Constantine et al 2020, AP/T ####
 ## Delta R values calculated from the two dats at depth 1184 cm, using Reimar and Reimar 2016 calculation (DOI:10.1017/RDC.2016.117) and applet (http://calib.org/JS/JSdeltar20/)
 DeltaR = -213
@@ -41,13 +40,14 @@ while(outlierPresence)
 }
 
 ## Kim et al 2004, Alkenone ####
-# Delta R (From http://calib.org/marine/index.html?npoints=1&clat=34.72845262222496&clon=128.2532094998296)
-deltaRs = c(-94,-71)
-deltaRSigmas = c(22,24)
-mu = mean(deltaRs)
+# Calculated Weighted Mean by combining Delta R estimates from Lee & Kim XXXX and Kong et al 2005
+deltaRs = c(-94,-71,-296,-253)
+deltaRSigmas = c(22,24,35,45)
 n = length(deltaRs)
-deltaR.weightedMean = round(sum(deltaRs/deltaRSigmas)/sum(1/deltaRSigmas))
-deltaRerr = round(sqrt(((1/(n-1)) * sum(((deltaRs-mean(deltaRs))/deltaRSigmas)^2))/((1/(n-1))*sum((1/deltaRSigmas)^2))))
+
+
+deltaR.weightedMean= round(sum(deltaRs/deltaRSigmas^2)/sum(1/deltaRSigmas^2))
+deltaRerr = round(sqrt(( (1/(n-1)) * sum(((deltaRs-deltaR.weightedMean)/deltaRSigmas)^2) )/((1/n)*sum(1/deltaRSigmas^2))))
 
 outlierPresence = TRUE
 SSDP102.dates$OutlierProb = 0
@@ -87,6 +87,7 @@ med.SSDP102.model= apply(SSDP102.model$thetaPredict,2,median)
 med.gy.model= apply(gy.model$thetaPredict,2,median)
 
 
-save(med.pomaeho.model,med.SSDP102.model,med.gy.model,pomaeho.apt,pomaeho.dates,pomaeho.model,SSDP102.dates,SSDP102.temp,SSDP102.model,gy.dates,gy.apt,gy.model,file='../R_image_files/agedepthmodels.RData')
+
+save(med.pomaeho.model,med.SSDP102.model,med.gy.model,pomaeho.apt,pomaeho.dates,pomaeho.model,SSDP102.dates,SSDP102.temp,SSDP102.model,gy.dates,gy.apt,gy.model,file=here('R_image_files/','agedepthmodels.RData'))
 
 
