@@ -154,7 +154,7 @@ loaded via a namespace (and not attached):
 ```
 
 # Funding
-E.R.Crema was funded by a Philip Leverhulme Prizes.
+E.R.Crema was funded by a Philip Leverhulme Prize (No. PLP-2019-304)
 
 # Licence
 CC-BY 3.0
