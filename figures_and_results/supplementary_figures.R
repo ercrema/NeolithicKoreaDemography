@@ -38,19 +38,31 @@ dev.off()
 
 ## Figure S3 - Millet Permutation Test ####
 pdf(file = here('figures_and_results','figureS3.pdf'),width = 6,height = 5)
-koreaC14$millets='no'
-koreaC14$millets[koreaC14$milletAsso==TRUE]='yes'
-millet.permtest=permTest(caldates,marks=koreaC14$millets,timeRange=c(7000,3000),runm=100,nsim=1000)
 plot(millet.permtest,focalm='yes')
 legend('topright',bty='n', legend=c('Millet SPD','Null SPD','Positive Deviation','Negative Deviation'), lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)), cex=0.8,bg='white')
 legend('topleft',legend=paste0('Global P-value=',round(millet.permtest$pValueList[1],5)),bty='n')
 dev.off()
 
 
-## Figure S4 - SST Median Time Series ####
-pdf(file = here('figures_and_results','figureS4.pdf'),width = 8,height = 8)
+## Figure S4 Age-Dept Model Kim et al ####
+pdf(file = here('figures_and_results','figureS4.pdf'),width = 9.5,height = 4.5)
+plot(SSDP102.model)
+dev.off()
+
+## Figure S5 Age-Dept Model Pomaeho ####
+pdf(file = here('figures_and_results','figureS5.pdf'),width = 9.5,height = 4.5)
+plot(pomaeho.model)
+dev.off()
+
+## Figure S6 Age-Dept Model GY ####
+pdf(file = here('figures_and_results','figureS6.pdf'),width = 9.5,height = 4.5)
+plot(gy.model)
+dev.off()
+
+## Figure S7 - SST Median Time Series ####
+pdf(file = here('figures_and_results','figureS7.pdf'),width = 8,height = 8)
 par(mfrow=c(3,1),mar=c(2.5,4,1,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(range(SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='',ylab='temperature (deg C)',axes=F,main='a')
+plot(0,xlim=c(7000,3000),type='n',ylim=c(range(SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37)+c(-0.1,0.1)),xlab='',ylab='temperature (deg C)',axes=F,main='SSDP-102')
 rect(xleft=med.SSDP102.model[80],xright=med.SSDP102.model[81],ybottom=10,ytop=30,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.SSDP102.model,SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37,type='l',lty=1,col='darkgrey')
 points(med.SSDP102.model,SSDP102.temp$T2L_SSDP_102_uk37_SST_from_uk37,pch=20,col='darkgrey')
@@ -59,7 +71,7 @@ text(4949.801,22,TeX('$1050cm \\, (d_{1})$'),cex=0.8)
 text(4700.733,20.33,TeX('$1035cm \\, (d_{2})$'),cex=0.8)
 axis(2)
 par(mar=c(2.5,4,1,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
+plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='Pomaeho')
 rect(xleft=med.pomaeho.model[72],xright=med.pomaeho.model[73],ybottom=0,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.pomaeho.model,pomaeho.apt$AP_T_Ratio,type='l',lty=1,col='darkgrey')
 points(med.pomaeho.model,pomaeho.apt$AP_T_Ratio,pch=20,col='darkgrey')
@@ -68,7 +80,7 @@ text(4348.611,0.95,TeX('$1020cm \\, (f_{1})$'),cex=0.8)
 text(4262,0.76,TeX('$1017cm \\, (f_{2})$'),cex=0.8)
 axis(2)
 par(mar=c(2.5,4,1,1))
-plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='b')
+plot(0,xlim=c(7000,3000),type='n',ylim=c(0.75,0.95),xlab='cal BP',ylab='AP/TP',axes=F,main='GY-1')
 rect(xleft=med.gy.model[78],xright=med.gy.model[79],ybottom=0.76,ytop=1,border=NA,col=rgb(0.67,0.84,0.9,0.5))
 lines(med.gy.model,gy.apt$AP_TP_Ratio,type='l',lty=1,col='darkgrey')
 points(med.gy.model,gy.apt$AP_TP_Ratio,pch=20,col='darkgrey')
@@ -80,20 +92,6 @@ axis(1,at=seq(7000,3000,-1000),line=-1)
 axis(1,at=seq(7000,3000,-500),labels=NA,line=-1)
 axis(1,at=seq(7000,3000,-100),tck=-0.01,labels=NA,line=-1)
 mtext('Cal BP',side=1,line=1.5,cex=0.8)
-dev.off()
-## Figure S5 Age-Dept Model Kim et al ####
-pdf(file = here('figures_and_results','figureS5.pdf'),width = 9.5,height = 4.5)
-plot(SSDP102.model)
-dev.off()
-
-## Figure S6 Age-Dept Model Pomaeho ####
-pdf(file = here('figures_and_results','figureS6.pdf'),width = 9.5,height = 4.5)
-plot(pomaeho.model)
-dev.off()
-
-## Figure S7 Age-Dept Model GY ####
-pdf(file = here('figures_and_results','figureS7.pdf'),width = 9.5,height = 4.5)
-plot(gy.model)
 dev.off()
 
 ## Figure S8 - Posterior Events  ####
