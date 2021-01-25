@@ -1,9 +1,0 @@
-"Test","Pval"
-"Exponential (both regions)",0.000999000999000999
-"Exponential (inland)",0.000999000999000999
-"Exponential (coastal)",0.000999000999000999
-"Logistic (both regions)",0.000999000999000999
-"Logistic (inland)",0.000999000999000999
-"Logistic (coastal)",0.000999000999000999
-"Permutation (inland vs coastal)",0.000999000999000999
-"Permutation (millet vs all dates)",0.632367632367632
