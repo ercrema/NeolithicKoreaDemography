@@ -154,8 +154,8 @@ loaded via a namespace (and not attached):
 ```
 
 # Funding
-This work was supported by the Korean Studies Promotion Service/Academy of Korean Studies (Laboratory Program for Korean Studies, AKS-2015-Lab-2250001) and 
-by a Philip Leverhulme Prize (No. PLP-2019-304)
+G.Lee was supported by the Korean Studies Promotion Service/Academy of Korean Studies (Laboratory Program for Korean Studies, AKS-2015-Lab-2250001)
+E.Crema was supported by a Philip Leverhulme Prize (No. PLP-2019-304)
 
 # Licence
 CC-BY 3.0
