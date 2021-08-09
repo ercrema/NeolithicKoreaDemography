@@ -20,29 +20,31 @@ load(here('R_image_files','mcmc_samples_inland.RData'))
 load(here('R_image_files','mcmc_samples_all.RData'))
 
 
-## Figure S1 - Millet Dates ####
-pdf(file = here('figures_and_results','figureS1.pdf'),width = 5,height = 8)
+## Figure S1 - Mark Permutation Test (Coastal vs Inland) ####
+pdf(file = here('figures_and_results','figureS1.pdf'),width = 3.4,height = 4,pointsize=1.5)
+par(mfrow=c(2,1),mar=c(5,4,2,1.1))
+plot(coastal.inland.permtest,focalm='inland',lwd=1.5,main='Inland Sites',ylim=c(0,0.19))
+plot(coastal.inland.permtest,focalm='coastal',lwd=1.5,main='Coastal Sites',ylim=c(0,0.19))
+legend('topright',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.80,0.36,0.36,0.3),rgb(0.25,0.41,0.88,0.3)),cex=0.8,bg='white')
+dev.off()
+
+
+## Figure S2 - Millet Dates ####
+pdf(file = here('figures_and_results','figureS2.pdf'),width = 5,height = 8)
 millet.dates = subset(koreaC14,koreaC14$milletAsso==TRUE)
 millet.dates$col=ifelse(millet.dates$region=='inland',"#FC8D62","#66C2A5")
 millet.caldates = calibrate(millet.dates$c14age, millet.dates$c14error,verbose=F,ids=millet.dates$labcode)
 multiplot(millet.caldates,decreasing = TRUE, label = TRUE,col.fill=millet.dates$col,gapFactor = 0.2,rescale=TRUE,cex.id=0.3)
 legend('bottomright',legend=c('Coastal Dates','Inland Dates'),fill=c("#66C2A5","#FC8D62"),bty='n')
 dev.off()
-## Figure S2 - Millet SPD ####
-pdf(file = here('figures_and_results','figureS2.pdf'),width = 6,height = 5)
+
+## Figure S3 - Millet SPD ####
+pdf(file = here('figures_and_results','figureS3.pdf'),width = 6,height = 5)
 millet.spd = stackspd(millet.caldates,group=millet.dates$region,timeRange = c(7000,3000),runm=100)
 plot(millet.spd)
 med.dates =medCal(millet.caldates)
 barCodes(med.dates,yrng=c(0,0.002),col=rgb(0,0,0,0.5),width =10)
 dev.off()
-
-## Figure S3 - Millet Permutation Test ####
-pdf(file = here('figures_and_results','figureS3.pdf'),width = 6,height = 5)
-plot(millet.permtest,focalm='yes')
-legend('topright',bty='n', legend=c('Millet SPD','Null SPD','Positive Deviation','Negative Deviation'), lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)), cex=0.8,bg='white')
-legend('topleft',legend=paste0('Global P-value=',round(millet.permtest$pValueList[1],5)),bty='n')
-dev.off()
-
 
 ## Figure S4 Age-Dept Model Kim et al ####
 pdf(file = here('figures_and_results','figureS4.pdf'),width = 9.5,height = 4.5)

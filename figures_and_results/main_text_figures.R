@@ -54,74 +54,62 @@ title('b')
 dev.off()
 
 
+# ## Figure 2 ####
+# boomBust.inland=plot(coastal.inland.permtest,bbty='b',focalm='inland')
+# boomBust.coastal=plot(coastal.inland.permtest,bbty='b',focalm='coastal')
+# 
+# pdf(file = "./figure2.pdf",width = 3.4,height = 4,pointsize=1.5)
+# par(mfrow=c(2,1),mar=c(5,4,2,1.1))
+# 
+# plot(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
+# 
+# for (i in 1:length(boomBust.coastal$booms))
+# {
+#   indexCalBP = boomBust.coastal$booms[[i]][[2]]
+#   indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
+#   indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+#   polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,2],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
+# }
+# 
+# for (i in 1:length(boomBust.coastal$busts))
+# {
+#   indexCalBP = boomBust.coastal$busts[[i]][[2]]
+#   indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
+#   indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+#   polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,1],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
+# }
+# polygon(c(coastal.inland.permtest$observed$coastal$calBP,rev(coastal.inland.permtest$observed$coastal$calBP)),c(coastal.inland.permtest$envelope$coastal[,1],rev(coastal.inland.permtest$envelope$coastal[,2])),border=NA,col='lightgrey')
+# lines(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,lwd=1.5)
+# text(x=6600,y=0.17,label='Coastal SPD')
+# text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[1],5)),cex=0.8)
+# 
+# 
+# 
+# plot(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
+# 
+# for (i in 1:length(boomBust.coastal$booms))
+# {
+#   indexCalBP = boomBust.coastal$booms[[i]][[2]]
+#   indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
+#   indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+#   polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,2],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
+# }
+# 
+# for (i in 1:length(boomBust.coastal$busts))
+# {
+#   indexCalBP = boomBust.coastal$busts[[i]][[2]]
+#   indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
+#   indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
+#   polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,1],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
+# }
+# polygon(c(coastal.inland.permtest$observed$inland$calBP,rev(coastal.inland.permtest$observed$inland$calBP)),c(coastal.inland.permtest$envelope$inland[,1],rev(coastal.inland.permtest$envelope$inland[,2])),border=NA,col='lightgrey')
+# lines(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,lwd=1.5)
+# text(x=6600,y=0.17,label='Inland SPD')
+# text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[2],5)),cex=0.8)
+# legend('topright',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.80,0.36,0.36,0.8),rgb(0.25,0.41,0.88,0.8)),cex=0.8,bty='n')
+# dev.off()
+# 
 ## Figure 2 ####
-boomBust.inland=plot(coastal.inland.permtest,bbty='b',focalm='inland')
-boomBust.coastal=plot(coastal.inland.permtest,bbty='b',focalm='coastal')
-
-pdf(file = "./figure2.pdf",width = 3.4,height = 4,pointsize=1.5)
-par(mfrow=c(2,1),mar=c(5,4,2,1.1))
-
-plot(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
-
-for (i in 1:length(boomBust.coastal$booms))
-{
-  indexCalBP = boomBust.coastal$booms[[i]][[2]]
-  indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
-  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
-  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,2],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
-}
-
-for (i in 1:length(boomBust.coastal$busts))
-{
-  indexCalBP = boomBust.coastal$busts[[i]][[2]]
-  indexPrDens = which(coastal.inland.permtest$observed$coastal$calBP%in%indexCalBP)
-  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
-  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$coastal[indexPrDens,1],rev(coastal.inland.permtest$observed$coastal$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
-}
-polygon(c(coastal.inland.permtest$observed$coastal$calBP,rev(coastal.inland.permtest$observed$coastal$calBP)),c(coastal.inland.permtest$envelope$coastal[,1],rev(coastal.inland.permtest$envelope$coastal[,2])),border=NA,col='lightgrey')
-lines(coastal.inland.permtest$observed$coastal$calBP,coastal.inland.permtest$observed$coastal$PrDens,lwd=1.5)
-text(x=6600,y=0.17,label='Coastal SPD')
-text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[1],5)),cex=0.8)
-
-
-
-plot(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,type='n',xlab='Year cal BP',ylab='Summed Probability',xlim=c(7000,3000),ylim=c(0,0.18))
-
-for (i in 1:length(boomBust.coastal$booms))
-{
-  indexCalBP = boomBust.coastal$booms[[i]][[2]]
-  indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
-  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
-  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,2],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.80,0.36,0.36,0.8))
-}
-
-for (i in 1:length(boomBust.coastal$busts))
-{
-  indexCalBP = boomBust.coastal$busts[[i]][[2]]
-  indexPrDens = which(coastal.inland.permtest$observed$inland$calBP%in%indexCalBP)
-  indexPrDens = c(indexPrDens,indexPrDens[length(indexPrDens)])
-  polygon(c(indexCalBP,rev(indexCalBP)),c(coastal.inland.permtest$envelope$inland[indexPrDens,1],rev(coastal.inland.permtest$observed$inland$PrDens[indexPrDens])),border=NA,col=rgb(0.25,0.41,0.88,0.8))
-}
-polygon(c(coastal.inland.permtest$observed$inland$calBP,rev(coastal.inland.permtest$observed$inland$calBP)),c(coastal.inland.permtest$envelope$inland[,1],rev(coastal.inland.permtest$envelope$inland[,2])),border=NA,col='lightgrey')
-lines(coastal.inland.permtest$observed$inland$calBP,coastal.inland.permtest$observed$inland$PrDens,lwd=1.5)
-text(x=6600,y=0.17,label='Inland SPD')
-text(x=6500,y=0.155,label=paste0('Global P-value<',round(coastal.inland.permtest$pValueList[2],5)),cex=0.8)
-legend('topright',legend=c('Observed SPD','Null SPD','Positive Deviation','Negative Deviation'),lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.80,0.36,0.36,0.8),rgb(0.25,0.41,0.88,0.8)),cex=0.8,bty='n')
-dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-## Figure 3 ####
-
 
 library(coda)
 coastal.col.alpha = rgb(0.4,0.76,0.65,0.5)
@@ -130,7 +118,7 @@ coastal.col="#66C2A5"
 inland.col="#FC8D62"
 
 options(scipen = 9999)
-pdf(file = here('figures_and_results','figure3.pdf'),width = 7.5,height = 3)
+pdf(file = here('figures_and_results','figure2.pdf'),width = 7.5,height = 3)
 par(mfrow=c(1,3),mar=c(5,4,3,0.5))
 
 #bl
@@ -220,7 +208,7 @@ legend('topright',legend=c('Coastal','Inland'),fill=c(coastal.col,inland.col),bt
 dev.off()
 
 
-## Figure 4 ####
+## Figure 3 ####
 # Extract event timing
 point_d1=SSDP102.model$thetaPredict[,81]
 point_d2=SSDP102.model$thetaPredict[,80]
@@ -259,18 +247,42 @@ changepointPlot = function(x,y,nsample=5000,hpd=0.90,...)
   text(x=-500,y=median(par('usr')[3:4]),label=paste('Changepoint before\n P=',round(sum(diff<0)/nsample,2)),cex=0.8)
 }
 
-pdf(file =here('figures_and_results','figure4.pdf'),width = 10,height = 8)
+# pdf(file =here('figures_and_results','figure4.pdf'),width = 14,height = 5)
+# par(mfrow=c(2,6),mar=c(4,4,2,1))
+# changepointPlot(point_d1,params.coastal$mu,nsample=5000,main=TeX('$d_{1}-c_{coastal}$'))
+# changepointPlot(point_d2,params.coastal$mu,nsample=5000,main=TeX('$d_{2}-c_{coastal}$'))
+# changepointPlot(point_f1,params.coastal$mu,nsample=5000,main=TeX('$f_{1}-c_{coastal}$'))
+# changepointPlot(point_f2,params.coastal$mu,nsample=5000,main=TeX('$f_{2}-c_{coastal}$'))
+# changepointPlot(point_g1,params.coastal$mu,nsample=5000,main=TeX('$g_{1}-c_{coastal}$'))
+# changepointPlot(point_g2,params.coastal$mu,nsample=5000,main=TeX('$g_{2}-c_{coastal}$'))
+# changepointPlot(point_d1,params.inland$mu,nsample=5000,main=TeX('$d_{1}-c_{inland}$'))
+# changepointPlot(point_d2,params.inland$mu,nsample=5000,main=TeX('$d_{2}-c_{inland}$'))
+# changepointPlot(point_f1,params.inland$mu,nsample=5000,main=TeX('$f_{1}-c_{inland}$'))
+# changepointPlot(point_f2,params.inland$mu,nsample=5000,main=TeX('$f_{2}-c_{inland}$'))
+# changepointPlot(point_g1,params.inland$mu,nsample=5000,main=TeX('$g_{1}-c_{inland}$'))
+# changepointPlot(point_g2,params.inland$mu,nsample=5000,main=TeX('$g_{2}-c_{inland}$'))
+# dev.off()
+
+pdf(file =here('figures_and_results','figure3.pdf'),width = 10,height = 8)
 par(mfrow=c(3,4),mar=c(4,4,2,1))
 changepointPlot(point_d1,params.coastal$mu,nsample=5000,main=TeX('$d_{1}-c_{coastal}$'))
 changepointPlot(point_d2,params.coastal$mu,nsample=5000,main=TeX('$d_{2}-c_{coastal}$'))
-changepointPlot(point_f1,params.coastal$mu,nsample=5000,main=TeX('$f_{1}-c_{coastal}$'))
-changepointPlot(point_f2,params.coastal$mu,nsample=5000,main=TeX('$f_{2}-c_{coastal}$'))
-changepointPlot(point_g1,params.coastal$mu,nsample=5000,main=TeX('$g_{1}-c_{coastal}$'))
-changepointPlot(point_g2,params.coastal$mu,nsample=5000,main=TeX('$g_{2}-c_{coastal}$'))
 changepointPlot(point_d1,params.inland$mu,nsample=5000,main=TeX('$d_{1}-c_{inland}$'))
 changepointPlot(point_d2,params.inland$mu,nsample=5000,main=TeX('$d_{2}-c_{inland}$'))
+changepointPlot(point_f1,params.coastal$mu,nsample=5000,main=TeX('$f_{1}-c_{coastal}$'))
+changepointPlot(point_f2,params.coastal$mu,nsample=5000,main=TeX('$f_{2}-c_{coastal}$'))
 changepointPlot(point_f1,params.inland$mu,nsample=5000,main=TeX('$f_{1}-c_{inland}$'))
 changepointPlot(point_f2,params.inland$mu,nsample=5000,main=TeX('$f_{2}-c_{inland}$'))
+changepointPlot(point_g1,params.coastal$mu,nsample=5000,main=TeX('$g_{1}-c_{coastal}$'))
+changepointPlot(point_g2,params.coastal$mu,nsample=5000,main=TeX('$g_{2}-c_{coastal}$'))
 changepointPlot(point_g1,params.inland$mu,nsample=5000,main=TeX('$g_{1}-c_{inland}$'))
 changepointPlot(point_g2,params.inland$mu,nsample=5000,main=TeX('$g_{2}-c_{inland}$'))
 dev.off()
+
+
+pdf(file = here('figures_and_results','figure4.pdf'),width = 6,height = 5)
+plot(millet.permtest,focalm='yes',lwd=2)
+legend('topright',bty='n', legend=c('Millet SPD','Null SPD','Positive Deviation','Negative Deviation'), lwd=c(1,5,5,5),col=c(1,'lightgrey',rgb(0.7,0,0,0.2),rgb(0,0,0.7,0.2)), cex=0.8,bg='white')
+legend('topleft',legend=paste0('Global P-value=',round(millet.permtest$pValueList[1],5)),bty='n')
+dev.off()
+
