@@ -42,7 +42,7 @@ The file `./runscript/age_depth_model.R` contains R scripts for fitting Compound
 [Bchron](https://cran.r-project.org/web/packages/Bchron/index.html) R package. Results are stored in the R image file `./R_image_files/kim2004_agedepthmodel.RData`.
 
 ## Bayesian Analysis
-The files `./runscript/mcmc_coastal.R`, `./runscript/mcmc_inland.R`, and `./runscript/mcmc_all.R` contains the scripts for fitting a bounded double exponential model via the [nimble](https://r-nimble.org/) and [nimbleCarbon](https://github.com/ercrema/nimbleCarbon) R packages, whilst `mcmc_diagnostic_ppc.R` contains the R code for MCMC diagnostics and posterior predictive checks. R image files containing the MCMC outputs (`mcmc_samples_inland.RData`,`mcmc_samples_coatsal.RData`, and `mcmc_samples_all.RData`) and the posterior predictive checks (`mcmcdiagnostic_postpredcheck.RData`) are loacted in the `R_image_files` directory.
+The files `./runscript/mcmc_coastal.R`, `./runscript/mcmc_inland.R`, and `./runscript/mcmc_all.R` contains the scripts for fitting a bounded double exponential model via the [nimble](https://r-nimble.org/) and [nimbleCarbon](https://cran.r-project.org/web/packages/nimbleCarbon/index.html) R packages, whilst `mcmc_diagnostic_ppc.R` contains the R code for MCMC diagnostics and posterior predictive checks. R image files containing the MCMC outputs (`mcmc_samples_inland.RData`,`mcmc_samples_coatsal.RData`, and `mcmc_samples_all.RData`) and the posterior predictive checks (`mcmcdiagnostic_postpredcheck.RData`) are loacted in the `R_image_files` directory.
 
 
 # File Structure
@@ -125,7 +125,7 @@ attached base packages:
 
 other attached packages:
  [1] latex2exp_0.4.0    Bchron_4.7.3       coda_0.19-4        truncnorm_1.0-8   
- [5] nimbleCarbon_0.1.0 nimble_0.10.1      raster_3.3-13      rgeos_0.5-3       
+ [5] nimbleCarbon_0.1.2 nimble_0.10.1      raster_3.3-13      rgeos_0.5-3       
  [9] rgdal_1.5-18       maptools_1.0-1     rworldmap_1.3-6    dbscan_1.1-5      
 [13] sp_1.4-5           rcarbon_1.4.1      here_0.1           dplyr_1.0.2       
 
