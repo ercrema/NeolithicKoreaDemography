@@ -12,3 +12,5 @@ KOR_msk*
 
 
 *.png
+
+figures_and_results/convert.sh
