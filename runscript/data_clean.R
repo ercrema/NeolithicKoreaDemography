@@ -8,7 +8,7 @@ koreaC14<-read.csv(here('data','Neolithic_C14_dates.csv'),stringsAsFactors = FAL
 ### Clean Data ###
 koreaC14 <- koreaC14 %>%mutate(milletAsso= case_when(
   stringr::str_detect(seed_association, "FM") | stringr::str_detect(seed_association, "BM") | 
-    stringr::str_detect(Materail_cmt, "millet") | stringr::str_detect(Material_cmt, "Millet")  ~ TRUE))
+    stringr::str_detect(Material_cmt, "millet") | stringr::str_detect(Material_cmt, "Millet")  ~ TRUE))
 
 koreaC14 <- data.frame(EntryNo=koreaC14$Entry,
                        labcode=koreaC14$Labcode,
