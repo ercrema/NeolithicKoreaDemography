@@ -155,7 +155,7 @@ loaded via a namespace (and not attached):
 
 # Funding
 G.Lee was supported by the Korean Studies Promotion Service/Academy of Korean Studies (Laboratory Program for Korean Studies, AKS-2015-Lab-2250001)
-E.Crema was supported by a Philip Leverhulme Prize (No. PLP-2019-304)
+E.Crema was supported by a Philip Leverhulme Prize (No. PLP-2019-304) and by the ERC grant Demography, Cultural Change, and the Diffusion of Rice and Millets during the Jomon-Yayoi transition in prehistoric Japan (ENCOUNTER) (Project N. 801953).
 
 # Licence
 CC-BY 3.0
