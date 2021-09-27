@@ -1,8 +1,8 @@
-# Title title title: source code, data, and scripts
+# Evaluating the temporal relationship between climatic and demographic events using radiocarbon data: a case-study from the Chulmun period, Korea: source code, data, and scripts
 
 This repository contains all data and scripts required to fully reproduce all analyses presented in the following paper: 
 
-_Paper Title_
+Kim,H., Lee,G., Crema, E.R. Evaluating the temporal relationship between climatic and demographic events using radiocarbon data: a case-study from the Chulmun period.
 
 The repository is organised as follows:
   -  `./runscript` ... contains R scripts for executing core analyses
@@ -154,8 +154,7 @@ loaded via a namespace (and not attached):
 ```
 
 # Funding
-G.Lee was supported by the Korean Studies Promotion Service/Academy of Korean Studies (Laboratory Program for Korean Studies, AKS-2015-Lab-2250001)
-E.Crema was supported by a Philip Leverhulme Prize (No. PLP-2019-304) and by the ERC grant Demography, Cultural Change, and the Diffusion of Rice and Millets during the Jomon-Yayoi transition in prehistoric Japan (ENCOUNTER) (Project N. 801953).
+This project was supported by the Korean Studies Promotion Service/Academy of Korean Studies (Laboratory Program for Korean Studies, AKS-2015-Lab-2250001)
 
 # Licence
 CC-BY 3.0
