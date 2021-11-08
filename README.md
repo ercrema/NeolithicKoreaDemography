@@ -1,8 +1,8 @@
-# Evaluating the temporal relationship between climatic and demographic events using radiocarbon data: a case-study from the Chulmun period, Korea: source code, data, and scripts
+# Bayesian analyses of the temporal relationship between climatic and demographic events: a case-study from the Chulmun period, Korea: source code, data, and scripts
 
 This repository contains all data and scripts required to fully reproduce all analyses presented in the following paper: 
 
-Kim,H., Lee,G., Crema, E.R. Evaluating the temporal relationship between climatic and demographic events using radiocarbon data: a case-study from the Chulmun period.
+Kim,H., Lee,G., Crema, E.R. Bayesian analyses of the temporal relationship between climatic and demographic events: a case-study from the Chulmun period, Korea.
 
 The repository is organised as follows:
   -  `./runscript` ... contains R scripts for executing core analyses
