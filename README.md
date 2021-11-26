@@ -1,8 +1,8 @@
-# Bayesian analyses of the temporal relationship between climatic and demographic events: a case-study from the Chulmun period, Korea: source code, data, and scripts
+# Bayesian analyses question the role of climate in Chulmun demography: source code, data, and scripts
 
 This repository contains all data and scripts required to fully reproduce all analyses presented in the following paper: 
 
-Kim,H., Lee,G., Crema, E.R. Bayesian analyses of the temporal relationship between climatic and demographic events: a case-study from the Chulmun period, Korea.
+Kim,H., Lee,G., Crema, E.R. Bayesian analyses question the role of climate in Chulmun demography.
 
 The repository is organised as follows:
   -  `./runscript` ... contains R scripts for executing core analyses
