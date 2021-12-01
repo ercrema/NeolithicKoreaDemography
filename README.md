@@ -2,7 +2,7 @@
 
 This repository contains all data and scripts required to fully reproduce all analyses presented in the following paper: 
 
-Kim,H., Lee,G., Crema, E.R. Bayesian analyses question the role of climate in Chulmun demography.
+Kim,H., Lee,G., Crema, E.R. (2021) [Bayesian analyses question the role of climate in Chulmun demography](https://doi.org/10.1038/s41598-021-03180-4), _Scientific Reports_. 
 
 The repository is organised as follows:
   -  `./runscript` ... contains R scripts for executing core analyses
